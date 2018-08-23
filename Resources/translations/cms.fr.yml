@@ -1,0 +1,3 @@
+header.sidebar.left.nav.post: <i class="fas fa-comments"></i><span class="label-menu">Articles</span>
+header.sidebar.left.nav.category: <i class="fab fa-folder"></i><span class="label-menu">Categories</span>
+header.sidebar.left.nav.tag: <i class="fas fa-bookmark"></i><span class="label-menu">Tags</span>

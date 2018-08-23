@@ -1,0 +1,24 @@
+{
+  "name": "octopouce-mu/cms-bundle",
+  "type": "symfony-bundle",
+  "description": "Cms bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name":     "Kevin Hilairet",
+      "email": "kevin@octopouce.mu"
+    },
+    {
+      "name":     "Octopouce",
+      "homepage": "http://www.octopouce.mu"
+    }
+  ],
+  "require": {
+    "php": "^7.1.3",
+    "symfony/framework-bundle": "^4.0",
+    "octopouce-mu/admin-bundle": "dev-master"
+  },
+  "autoload": {
+    "psr-4": { "Octopouce\\CmsBundle\\": "" }
+  }
+}

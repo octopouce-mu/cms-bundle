@@ -1,0 +1,105 @@
+<?php
+/**
+ * Created by Kévin Hilairet <kevin@octopouce.mu>
+ * Date: 03/07/2018
+ */
+
+namespace Octopouce\CmsBundle\Controller\Admin;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Octopouce\CmsBundle\Entity\Page;
+use Octopouce\CmsBundle\Form\PageType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+/**
+ * @Route("/page")
+ */
+class PageController extends Controller
+{
+	/**
+	 * @Route("/", name="octopouce_cms_admin_page_index")
+	 */
+	public function index() : Response {
+		$pages = $this->getDoctrine()->getRepository(Page::class)->findBy([], ['title' => 'asc']);
+
+		return $this->render('@OctopouceCms/Admin/Page/index.html.twig', [
+			'pages' => $pages
+		]);
+	}
+
+	/**
+	 * @Route("/create", name="octopouce_cms_admin_page_create")
+	 */
+	public function create(Request $request) : Response {
+		$em = $this->getDoctrine()->getManager();
+
+		$page = new Page();
+		$page->setEnabled(true);
+
+		$form = $this->createForm(PageType::class, $page);
+
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+
+			$em->persist($page);
+			$em->flush();
+
+			return $this->redirectToRoute('octopouce_cms_admin_page_edit', ['page'=>$page->getId()]);
+		}
+
+		return $this->render('@OctopouceCms/Admin/Page/create.html.twig', [
+			'form' => $form->createView()
+		]);
+	}
+
+	/**
+	 * @Route("/{page}/edit", name="octopouce_cms_admin_page_edit")
+	 */
+	public function edit(Page $page, Request $request, EntityManagerInterface $em) : Response {
+
+		$originalBlocks = new ArrayCollection();
+		foreach ($page->getBlocks() as $block) {
+			$originalBlocks->add($block);
+		}
+
+		$form = $this->createForm(PageType::class, $page);
+
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+
+			foreach ($originalBlocks as $block) {
+				if (false === $page->getBlocks()->contains($block)) {
+					 $em->remove($block);
+				}
+			}
+
+			$em->flush();
+
+			$this->addFlash('success', 'page.edited');
+
+			return $this->redirectToRoute('octopouce_cms_admin_page_edit', ['page' => $page->getId()]);
+		}
+
+		return $this->render('@OctopouceCms/Admin/Page/edit.html.twig', [
+			'page' => $page,
+			'form' => $form->createView()
+		]);
+	}
+
+	/**
+	 * @Route("/{page}/delete", name="octopouce_cms_admin_page_delete")
+	 */
+	public function delete(Page $page) : Response {
+		$em = $this->getDoctrine()->getManager();
+		$em->remove($page);
+		$em->flush();
+
+		$this->addFlash('success', 'page.deleted');
+
+		return $this->redirectToRoute('octopouce_cms_admin_page_index');
+	}
+}
