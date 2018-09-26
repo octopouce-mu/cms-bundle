@@ -1,4 +1,4 @@
 octopouce_cms_admin:
     resource: '../../Controller/Admin'
     type: annotation
-    prefix: /cms
+    prefix: /admin/cms
