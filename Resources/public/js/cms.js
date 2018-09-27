@@ -1,7 +1,6 @@
 let isChanged = false;
 
 $(document).ready(function () {
-    ClassicEditor.create( document.querySelector( '.editor' ) );
     $('input#page_seoTitle, input#page_seoDescription, ' +
         'input#page_seoFacebookTitle, input#page_seoFacebookDescription, ' +
         'input#page_seoTwitterTitle, input#page_seoTwitterDescription')
