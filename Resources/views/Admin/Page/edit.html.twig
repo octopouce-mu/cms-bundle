@@ -23,8 +23,8 @@
                     <div id="page" class="col s12">
                         <div class="box">
                             <div class="content">
-                                {{ form_row(form.title) }}
-                                {{ form_row(form.slug) }}
+                                {{ form_row(form.title, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
+                                {{ form_row(form.slug, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
                             </div>
                         </div>
 
@@ -33,21 +33,26 @@
                             {% for blockField in form.blocks %}
                                 <div class="box block">
                                     <div class="content">
-                                        <button type="button" class="waves-effect waves-light btn-small remove-block red"><i class="fas fa-times"></i></button>
+                                        {% if page.editable or is_granted('ROLE_SUPER_ADMIN') %}
+                                            <button type="button" class="waves-effect waves-light btn-small remove-block red"><i class="fas fa-times"></i></button>
+                                        {% endif %}
                                         {{ form_errors(blockField) }}
                                         {{ form_widget(blockField) }}
                                     </div>
                                 </div>
                             {% endfor %}
                         </div>
-                        <p>
-                            <button type="button" class="add-another-collection-widget waves-effect waves-light btn"
-                                    data-list="#block-fields-list">Add block</button>
-                        </p>
+                        {% if page.editable or is_granted('ROLE_SUPER_ADMIN') %}
+                            <p>
+                                <button type="button" class="add-another-collection-widget waves-effect waves-light btn"
+                                        data-list="#block-fields-list">Add block</button>
+                            </p>
+                        {% endif %}
                     </div>
                     <div id="cf" class="col s12">
                         <div class="box">
                             <div class="content">
+                                {{ form_row(form.fields) }}
 
                             </div>
                         </div>
@@ -91,10 +96,13 @@
             <div class="col s3">
                 <div class="box">
                     <div class="content">
-                        {{ form_row(form.enabled) }}
-                        {{ form_row(form.publishedAt) }}
-                        {{ form_row(form.finishedAt) }}
-                        {{ form_row(form.parent) }}
+                        {% if not is_granted('ROLE_SUPER_ADMIN') %}<div class="hide">{% endif %}
+                        {{ form_row(form.editable, {'attr':{'disabled':is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
+                        {% if not is_granted('ROLE_SUPER_ADMIN') %}</div>{% endif %}
+                        {{ form_row(form.enabled, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
+                        {{ form_row(form.publishedAt, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
+                        {{ form_row(form.finishedAt, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
+                        {{ form_row(form.parent, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
                         {{ form_row(form.submit) }}
                     </div>
                 </div>

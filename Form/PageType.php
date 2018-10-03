@@ -13,9 +13,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageType extends AbstractType
@@ -38,8 +41,15 @@ class PageType extends AbstractType
 				'by_reference' => false
 			])
 
+			->add('fields', CollectionType::class, [
+				'entry_type' => FieldType::class,
+				'label' => false,
+			])
 
 			->add('enabled', SwitchType::class, [
+				'required' => false
+			])
+			->add('editable', SwitchType::class, [
 				'required' => false
 			])
 			->add('publishedAt', DatePickerType::class)
@@ -86,6 +96,17 @@ class PageType extends AbstractType
 				'label' => 'save'
 			])
 		;
+
+//		$builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+//			$page = $event->getData();
+//
+//			$form = $event->getForm();
+//			$form->add('fields', CollectionType::class);
+//			foreach ($page->getFields() as $field) {
+//				$form->get('fields')->add('field_'.$field->getName(), FieldType::class);
+//			}
+//
+//		});
 	}
 
 	public function configureOptions(OptionsResolver $resolver)

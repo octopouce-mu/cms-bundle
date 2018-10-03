@@ -44,6 +44,13 @@ class Page
 	protected $enabled;
 
 	/**
+	 * @var bool
+	 *
+	 * @ORM\Column(name="editable", type="boolean")
+	 */
+	protected $editable;
+
+	/**
 	 * @var \DateTime
 	 *
 	 * @ORM\Column(name="published_at", type="datetime")
@@ -146,6 +153,7 @@ class Page
 	 */
 	public function __construct() {
 		$this->enabled     = false;
+		$this->editable    = true;
 		$this->publishedAt = new \DateTime('now');
 		$this->createdAt   = new \DateTime('now');
 		$this->fields      = new ArrayCollection();
@@ -227,6 +235,23 @@ class Page
 	 */
 	public function setEnabled( bool $enabled ) {
 		$this->enabled = $enabled;
+
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isEditable() {
+		return $this->editable;
+	}
+
+	/**
+	 * @param bool $editable
+	 * @return Page
+	 */
+	public function setEditable( bool $editable ) {
+		$this->editable = $editable;
 
 		return $this;
 	}
@@ -512,6 +537,16 @@ class Page
 	public function removeField(Field $field)
 	{
 		return $this->fields->removeElement($field);
+	}
+
+	/**
+	 * @param $fields
+	 * @return Page
+	 */
+	public function setFields($fields) {
+		$this->fields = $fields;
+
+		return $this;
 	}
 
 }

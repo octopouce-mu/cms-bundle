@@ -274,6 +274,7 @@ const appendValueBySliders = function (blockNumber, textarea) {
 const textBlock = function(blockNumber, textarea) {
     destroyWysiwyg(blockNumber, textarea);
     destroyTabs(blockNumber, textarea);
+    destroySlider(blockNumber, textarea);
 };
 
 /**
@@ -284,6 +285,7 @@ const textBlock = function(blockNumber, textarea) {
  */
 const wysiwygBlock = function(blockNumber, textarea) {
     destroyTabs(blockNumber, textarea);
+    destroySlider(blockNumber, textarea);
 
     ClassicEditor.create(document.querySelector('#page_blocks_' + blockNumber + '_value'));
 
@@ -298,8 +300,9 @@ const wysiwygBlock = function(blockNumber, textarea) {
 const tabsBlock = function(blockNumber, textarea) {
 
     // init block
-    textarea.hide();
     destroyWysiwyg(blockNumber, textarea);
+    destroySlider(blockNumber, textarea);
+    textarea.hide();
 
 
     // if data exist in database, set tabs, else init tabs
@@ -462,5 +465,16 @@ const destroyWysiwyg = function(blockNumber, textarea) {
  */
 const destroyTabs = function(blockNumber, textarea) {
     $('#page_blocks_' + blockNumber + '_tabs').remove();
+    textarea.show().find('textarea').show();
+};
+
+/**
+ * Destroy the type block Slider
+ *
+ * @param blockNumber
+ * @param textarea
+ */
+const destroySlider = function(blockNumber, textarea) {
+    $('#page_blocks_' + blockNumber + '_sliders').remove();
     textarea.show().find('textarea').show();
 };
