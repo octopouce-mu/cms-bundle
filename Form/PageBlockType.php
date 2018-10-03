@@ -35,7 +35,9 @@ class PageBlockType extends AbstractType
 				]
 			])
 
-			->add('value', TextareaType::class)
+			->add('value', TextareaType::class, [
+				'required' => false
+			])
 
 		;
 	}
