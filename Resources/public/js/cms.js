@@ -59,6 +59,7 @@ const changeBlock = function(number) {
     var id = $('#page_blocks_'+number+'_block').val();
     $('#page_blocks_'+number+'_block').on('change', function () {
         if(id != $(this).val()){
+            id = $('#page_blocks_'+number+'_block').val();
             $('#page_blocks_'+number+'_value').text('');
             initBlock(number);
         }

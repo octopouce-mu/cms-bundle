@@ -8,9 +8,12 @@ namespace Octopouce\CmsBundle\Controller\Admin;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Octopouce\AdminBundle\Utils\FileUploader;
+use Octopouce\CmsBundle\Entity\Field;
 use Octopouce\CmsBundle\Entity\Page;
 use Octopouce\CmsBundle\Form\PageType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -59,7 +62,7 @@ class PageController extends Controller
 	/**
 	 * @Route("/{page}/edit", name="octopouce_cms_admin_page_edit")
 	 */
-	public function edit(Page $page, Request $request, EntityManagerInterface $em) : Response {
+	public function edit(Page $page, Request $request, EntityManagerInterface $em, FileUploader $fileUploader) : Response {
 
 		$originalBlocks = new ArrayCollection();
 		foreach ($page->getBlocks() as $block) {
@@ -74,6 +77,35 @@ class PageController extends Controller
 			foreach ($originalBlocks as $block) {
 				if (false === $page->getBlocks()->contains($block)) {
 					 $em->remove($block);
+				}
+			}
+
+			$fields = $request->request->get('fields');
+			foreach ($fields as $name => $value) {
+				$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
+				if($field) {
+					$field->setValue($value);
+				}
+			}
+
+			$fields = $request->files->get('fields');
+			foreach ($fields as $name => $value) {
+				$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
+				if($field) {
+
+					$now = new \DateTime();
+					$path = 'uploads/'.$now->format('Y/m');
+
+					$fileSystem = new Filesystem();
+					$fileSystem->mkdir($path, 0777);
+
+					if($field->getValue() && file_exists($field->getValue())) {
+						$fileSystem->remove($field->getValue());
+					}
+
+					$nameImage = $fileUploader->upload($value, $path);
+					$field->setValue($path.'/'.$nameImage);
+
 				}
 			}
 

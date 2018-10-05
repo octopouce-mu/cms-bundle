@@ -41,10 +41,10 @@ class PageType extends AbstractType
 				'by_reference' => false
 			])
 
-			->add('fields', CollectionType::class, [
-				'entry_type' => FieldType::class,
-				'label' => false,
-			])
+//			->add('fields', CollectionType::class, [
+//				'entry_type' => FieldType::class,
+//				'label' => false,
+//			])
 
 			->add('enabled', SwitchType::class, [
 				'required' => false

@@ -32,6 +32,13 @@ class Field
 	/**
 	 * @var string
 	 *
+	 * @ORM\Column(name="slug", type="string", length=255)
+	 */
+	protected $slug;
+
+	/**
+	 * @var string
+	 *
 	 * @ORM\Column(name="type", type="string", length=255)
 	 */
 	protected $type;
@@ -72,6 +79,23 @@ class Field
 	 */
 	public function setName( $name ) {
 		$this->name = $name;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSlug() {
+		return $this->slug;
+	}
+
+	/**
+	 * @param string $slug
+	 * @return Field
+	 */
+	public function setSlug( $slug ) {
+		$this->slug = $slug;
 
 		return $this;
 	}
