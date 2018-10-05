@@ -92,7 +92,6 @@ class PageController extends Controller
 			foreach ($fields as $name => $value) {
 				$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
 				if($field) {
-
 					$now = new \DateTime();
 					$path = 'uploads/'.$now->format('Y/m');
 
