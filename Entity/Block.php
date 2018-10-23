@@ -95,7 +95,7 @@ class Block
 	 * @param string $attributes
 	 * @return Block
 	 */
-	public function setAttributes( string $attributes ) {
+	public function setAttributes( $attributes ) {
 		$this->attributes = $attributes;
 
 		return $this;
