@@ -148,6 +148,11 @@ class Page
 	 */
 	private $fields;
 
+	public function __toString() {
+		return $this->getTitle();
+	}
+
+
 	/**
 	 * Page constructor.
 	 */

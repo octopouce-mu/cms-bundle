@@ -72,6 +72,9 @@ const initBlock = function(blockNumber) {
     const textarea = $('#page_blocks_' + blockNumber + ' .textarea');
 
     switch (blockType) {
+        case 5:
+            imageTextBlock(blockNumber, textarea);
+            break;
         case 4:
             sliderBlock(blockNumber, textarea);
             break;
@@ -95,6 +98,7 @@ const initBlock = function(blockNumber) {
 const sliderBlock = function(blockNumber, textarea) {
     destroyWysiwyg(blockNumber, textarea);
     destroyTabs(blockNumber, textarea);
+    destroyImageText(blockNumber, textarea);
 
     // init block
     textarea.hide();
@@ -276,6 +280,7 @@ const textBlock = function(blockNumber, textarea) {
     destroyWysiwyg(blockNumber, textarea);
     destroyTabs(blockNumber, textarea);
     destroySlider(blockNumber, textarea);
+    destroyImageText(blockNumber, textarea);
 };
 
 /**
@@ -287,6 +292,7 @@ const textBlock = function(blockNumber, textarea) {
 const wysiwygBlock = function(blockNumber, textarea) {
     destroyTabs(blockNumber, textarea);
     destroySlider(blockNumber, textarea);
+    destroyImageText(blockNumber, textarea);
 
     ClassicEditor.create(document.querySelector('#page_blocks_' + blockNumber + '_value'));
 
@@ -303,6 +309,8 @@ const tabsBlock = function(blockNumber, textarea) {
     // init block
     destroyWysiwyg(blockNumber, textarea);
     destroySlider(blockNumber, textarea);
+    destroyImageText(blockNumber, textarea);
+
     textarea.hide();
 
 
@@ -447,6 +455,20 @@ const appendValueByTabs = function (blockNumber, textarea) {
 
 };
 
+const imageTextBlock = function(blockNumber, textarea) {
+    // init block
+    destroyWysiwyg(blockNumber, textarea);
+    destroyTabs(blockNumber, textarea);
+    destroySlider(blockNumber, textarea);
+    textarea.hide();
+
+    textarea.after('<div id="page_blocks_' + blockNumber + '_imageText">' +
+        '<div class="row"><div class="input-field col s12"><input type="text"><label for="">Titre</label></div></div>' +
+        '<div class="row"><div class="input-field col s12"><textarea class="materialize-textarea"></textarea><label for="">Description</label></div></div>' +
+        '<div class="row"><div class="col s12"><label for="">Image</label><div class="file-field input-field"><div class="btn"><span>Image</span><input type="file"></div><div class="file-path-wrapper"><input class="file-path" type="text"></div></div></div></div>' +
+    '</div>');
+};
+
 /**
  * Destroy the type block Wysiwyg
  *
@@ -477,5 +499,16 @@ const destroyTabs = function(blockNumber, textarea) {
  */
 const destroySlider = function(blockNumber, textarea) {
     $('#page_blocks_' + blockNumber + '_sliders').remove();
+    textarea.show().find('textarea').show();
+};
+
+/**
+ * Destroy the type block ImageText
+ *
+ * @param blockNumber
+ * @param textarea
+ */
+const destroyImageText = function(blockNumber, textarea) {
+    $('#page_blocks_' + blockNumber + '_imageText').remove();
     textarea.show().find('textarea').show();
 };
