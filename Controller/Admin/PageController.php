@@ -92,18 +92,14 @@ class PageController extends Controller
 			foreach ($fields as $name => $value) {
 				$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
 				if($field) {
-					$now = new \DateTime();
-					$path = 'uploads/'.$now->format('Y/m');
-
 					$fileSystem = new Filesystem();
-					$fileSystem->mkdir($path, 0777);
 
 					if($field->getValue() && file_exists($field->getValue())) {
 						$fileSystem->remove($field->getValue());
 					}
 
-					$nameImage = $fileUploader->upload($value, $path);
-					$field->setValue($path.'/'.$nameImage);
+					$nameImage = $fileUploader->upload($value, 'date');
+					$field->setValue($nameImage);
 
 				}
 			}
