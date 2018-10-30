@@ -81,26 +81,31 @@ class PageController extends Controller
 			}
 
 			$fields = $request->request->get('fields');
-			foreach ($fields as $name => $value) {
-				$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
-				if($field) {
-					$field->setValue($value);
+			if($fields) {
+				foreach ($fields as $name => $value) {
+					$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
+					if($field) {
+						$field->setValue($value);
+					}
 				}
 			}
 
+
 			$fields = $request->files->get('fields');
-			foreach ($fields as $name => $value) {
-				$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
-				if($field) {
-					$fileSystem = new Filesystem();
+			if($fields) {
+				foreach ($fields as $name => $value) {
+					$field = $em->getRepository(Field::class)->findOneBy(['slug' => $name, 'page' => $page]);
+					if($field) {
+						$fileSystem = new Filesystem();
 
-					if($field->getValue() && file_exists($field->getValue())) {
-						$fileSystem->remove($field->getValue());
+						if($field->getValue() && file_exists($field->getValue())) {
+							$fileSystem->remove($field->getValue());
+						}
+
+						$nameImage = $fileUploader->upload($value, 'date');
+						$field->setValue($nameImage);
+
 					}
-
-					$nameImage = $fileUploader->upload($value, 'date');
-					$field->setValue($nameImage);
-
 				}
 			}
 
