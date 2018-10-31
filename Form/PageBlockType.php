@@ -25,14 +25,17 @@ class PageBlockType extends AbstractType
 			->add('enabled', SwitchType::class, [
 				'required' => false
 			])
-			->add('title', TextType::class)
+			->add('title', TextType::class, [
+				'label' => 'Name'
+			])
 
 			->add('block', EntityType::class, [
 				'class' => Block::class,
 				'choice_label' => 'name',
 				'attr' => [
 					'class' => 'select-block'
-				]
+				],
+				'label' => 'Type'
 			])
 
 			->add('value', TextareaType::class, [

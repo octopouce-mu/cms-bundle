@@ -249,7 +249,7 @@ const editSlide = function(blockNumber) {
 };
 
 /**
- * Create JSON value in input block_value
+ * Create JSON value in input block_value sliders
  *
  * @param blockNumber
  * @param textarea
@@ -331,8 +331,18 @@ const tabsBlock = function(blockNumber, textarea) {
             $('#page_blocks_' + blockNumber + '_tabs ul').append('<li class="tab col s2"><a class="'+liClass+'" href="#page_blocks_'+blockNumber+'_tab_'+number+'"><input type="text" placeholder="Tab'+number+'" value="'+title+'"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button></a></li>');
             $('#page_blocks_' + blockNumber + '_tabs').append('<div id="page_blocks_'+blockNumber+'_tab_'+number+'" class="col s12 input-field tab-content"><textarea class="materialize-textarea">'+content+'</textarea></div>');
 
-            ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tab_'+number+' textarea') )
-                .then(e => {
+            ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tab_'+number+' textarea'), {
+                toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3' },
+                        { model: 'heading4', view: 'h4', title: 'Heading 4' },
+                        { model: 'heading5', view: 'h5', title: 'Heading 5' }
+                    ]
+                }
+            } ).then(e => {
                     e.model.document.on( 'change:data', () => {
                         appendValueByTabs(blockNumber, textarea);
                     } );
@@ -347,8 +357,18 @@ const tabsBlock = function(blockNumber, textarea) {
             '  </div>');
 
         // transform textarea to wysiwyg
-        ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tabs textarea') )
-            .then(e => {
+        ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tabs textarea'), {
+            toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3' },
+                    { model: 'heading4', view: 'h4', title: 'Heading 4' },
+                    { model: 'heading5', view: 'h5', title: 'Heading 5' }
+                ]
+            }
+        } ).then(e => {
                 e.model.document.on( 'change:data', () => {
                     appendValueByTabs(blockNumber, textarea);
                 } );
@@ -395,8 +415,18 @@ const addTab = function(blockNumber, textarea) {
         pageBlock.append('<div id="page_blocks_'+blockNumber+'_tab_'+countTab+'" class="col s12 input-field tab-content"><textarea class="materialize-textarea tab-area"></textarea></div>');
 
         // transform textarea to wysiwyg
-        ClassicEditor.create(document.querySelector('#page_blocks_'+blockNumber+'_tab_'+countTab+' textarea'))
-            .then(e => {
+        ClassicEditor.create(document.querySelector('#page_blocks_'+blockNumber+'_tab_'+countTab+' textarea'), {
+            toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3' },
+                    { model: 'heading4', view: 'h4', title: 'Heading 4' },
+                    { model: 'heading5', view: 'h5', title: 'Heading 5' }
+                ]
+            }
+        }).then(e => {
                 e.model.document.on( 'change:data', () => {
                     appendValueByTabs(blockNumber, textarea);
                 } );
@@ -463,10 +493,168 @@ const imageTextBlock = function(blockNumber, textarea) {
     textarea.hide();
 
     textarea.after('<div id="page_blocks_' + blockNumber + '_imageText">' +
-        '<div class="row"><div class="input-field col s12"><input type="text"><label for="">Titre</label></div></div>' +
-        '<div class="row"><div class="input-field col s12"><textarea class="materialize-textarea"></textarea><label for="">Description</label></div></div>' +
-        '<div class="row"><div class="col s12"><label for="">Image</label><div class="file-field input-field"><div class="btn"><span>Image</span><input type="file"></div><div class="file-path-wrapper"><input class="file-path" type="text"></div></div></div></div>' +
+        '<div class="row"><div class="input-field col s12"><input type="text" name="titre"><label for="titre">Titre</label></div></div>' +
+        '<div class="row"><div class="input-field col s12"><label for="description">Description</label><textarea class="materialize-textarea" name="description"></textarea></div></div>' +
+        '<div class="row"><div class="col s12"><button class="btn add-img" type="button">Ajouter une image</button></div></div></div>' +
     '</div>');
+
+    // create modal
+    $('.main').append('<div id="page_blocks_' + blockNumber + '_imageText_modal" class="modal modal-fixed-footer imageText-modal">' +
+        '<form class="form-imageText" name="form-imageText" method="post" enctype="multipart/form-data"><div class="modal-content">' +
+        '      <h4>Add image</h4>' +
+        '      <div class="row">' +
+        '        <div class="input-field col s12">' +
+        '          <input id="title" type="text" class="validate" required name="title">' +
+        '          <label for="title">Title</label>' +
+        '        </div>' +
+        '      </div>' +
+        '       <div class="row">' +
+        '        <div class="input-field col s12">' +
+        '          <input id="alt" type="text" class="validate" name="alt">' +
+        '          <label for="alt">Alt</label>' +
+        '        </div>' +
+        '      </div>' +
+        '      <div class="file-field input-field">' +
+        '      <div class="btn">' +
+        '        <span>Image</span>' +
+        '        <input type="file" required name="file">' +
+        '      </div>' +
+        '      <div class="file-path-wrapper">' +
+        '        <input class="file-path validate" type="text" placeholder="Upload one file" name="file-text">' +
+        '      </div>' +
+        '    </div>' +
+        '    <div class="row"><div class="col s12 img-show"></div></div> ' +
+        '</div>' +
+        '    <div class="modal-footer">' +
+        '       <input type="hidden" name="edit">' +
+        '      <button type="submit" class="btn waves-effect waves-green">Add</button>' +
+        '    </div></form></div>');
+    $('#page_blocks_' + blockNumber + '_imageText_modal').modal();
+
+    if($('#page_blocks_' + blockNumber + '_value').text().length > 0) {
+        var contentObject = $.parseJSON($('#page_blocks_' + blockNumber + '_value').val());
+        var titre = $('#page_blocks_' + blockNumber + '_imageText input[name="titre"]').val(contentObject.title);
+        var description = $('#page_blocks_' + blockNumber + '_imageText textarea[name="description"]').text(contentObject.description);
+
+        $.get( "/admin/file/api/" + contentObject.image.id, function( img ) {
+            $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="/' + img.path +'" width="100%">');
+            $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
+        }).catch(function(){
+            $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="">');
+            $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
+        });
+    }
+
+    ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_imageText textarea'), {
+        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+        heading: {
+            options: [
+                { model: 'paragraph', title: 'Paragraph' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4' },
+                { model: 'heading5', view: 'h5', title: 'Heading 5' }
+            ]
+        }
+    } )
+        .then(e => {
+            e.model.document.on( 'change:data', () => {
+                appendValueByImageText(blockNumber, textarea);
+            } );
+        });
+
+
+    // add image
+    $('button.add-img').on('click', function(){
+        $('#page_blocks_' + blockNumber + '_imageText_modal').modal('open');
+        $('#page_blocks_' + blockNumber + '_imageText_modal h4').text('Add image');
+        $('#page_blocks_' + blockNumber + '_imageText_modal .img-show').html('');
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="title"]').val('');
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="alt"]').val('');
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="fileText"]').val('');
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="edit"]').val('');
+        var file = $('#page_blocks_' + blockNumber + '_imageText_modal input[name="file"]');
+        file.attr('required', true).replaceWith(file.val('').clone(true));
+    });
+
+
+    // form add slide with send data for register image in DB
+    $('form[name="form-imageText"]').submit(function( event ) {
+
+        var formData = new FormData($(this)[0]);
+        var title = $(this).find('input[name="title"]');
+        var description = $(this).find('input[name="alt"]');
+        var file = $(this).find('input[name="file"]');
+        var fileText = $(this).find('input[name="file-text"]');
+        var edit = $(this).find('input[name="edit"]');
+
+        // add/update file
+        if(file.val().length > 2) {
+            $.ajax({
+                url: '/admin/file/api/create',
+                type: "POST",
+                dataType: "json",
+                data: formData,
+                async: true,
+                success: function (res) {
+                     if(edit.val()) {
+                        var image = $('#page_blocks_' + blockNumber + '_imageText img');
+                        image.data('imgId', res.id);
+                        image.data('imgPath', res.path);
+                        image.attr('src', '/' + res.path);
+                    } else {
+                         $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-id="' + res.id +'" data-img-path="' + res.path +'" src="/' + res.path +'" width="100%">');
+                         $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
+                        // editSlide(blockNumber);
+                    }
+
+                    // Create JSON value in input block_value
+                    appendValueByImageText(blockNumber, textarea);
+
+                    $('#page_blocks_' + blockNumber + '_imageText_modal').modal('close');
+
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        } else {
+            var image = $('#page_blocks_' + blockNumber + '_imageText img');
+
+            // Create JSON value in input block_value
+            appendValueByImageText(blockNumber, textarea);
+
+            $('#page_blocks_' + blockNumber + '_imageText_modal').modal('close');
+
+        }
+
+        event.preventDefault();
+
+    });
+};
+
+
+/**
+ * Create JSON value in input block_value image
+ *
+ * @param blockNumber
+ * @param textarea
+ */
+const appendValueByImageText = function (blockNumber, textarea) {
+    textarea = textarea.find('textarea');
+    var contentObject = {};
+
+    let content = $('#page_blocks_' + blockNumber + '_imageText');
+    var titre = $('#page_blocks_' + blockNumber + '_imageText input[name="titre"]').val();
+    var description = $('#page_blocks_' + blockNumber + '_imageText').find('.ck-content').html();
+    var image = $('#page_blocks_' + blockNumber + '_imageText img');
+
+
+    contentObject = {'title': titre, 'description': description, 'image': {'id': image.data('imgId')}};
+
+    $(textarea).html(JSON.stringify(contentObject));
+    isChanged = true;
+
 };
 
 /**

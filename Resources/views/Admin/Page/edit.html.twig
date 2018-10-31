@@ -71,24 +71,12 @@
                         </div>
                         <div class="box">
                             <div class="content">
-                                {{ form_row(form.seoFacebookTitle) }}
-                                {{ form_row(form.seoFacebookDescription) }}
-                                {{ form_row(form.seoFacebookImage) }}
-                                {% if page.seoFacebookImage %}
-                                    <div class="col s3">
-                                        <img src="{{ asset(page.seoFacebookImage.pathname) }}" alt="" width="100%">
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="box">
-                            <div class="content">
-                                {{ form_row(form.seoTwitterTitle) }}
-                                {{ form_row(form.seoTwitterDescription) }}
-                                {{ form_row(form.seoTwitterImage) }}
-                                {% if page.seoTwitterImage %}
-                                    <div class="col s3">
-                                        <img src="{{ asset(page.seoTwitterImage.pathname) }}" alt="" width="100%">
+                                {{ form_row(form.ogTitle) }}
+                                {{ form_row(form.ogDescription) }}
+                                {{ form_row(form.ogImage) }}
+                                {% if page.ogImage %}
+                                    <div class="col m3">
+                                        <img src="{{ asset(page.ogImage.pathname) }}" alt="" width="100%">
                                     </div>
                                 {% endif %}
                             </div>

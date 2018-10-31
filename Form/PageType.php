@@ -71,23 +71,13 @@ class PageType extends AbstractType
 				'required' => false
 			])
 
-			->add('seoFacebookTitle', TextType::class, [
+			->add('ogTitle', TextType::class, [
 				'required' => false
 			])
-			->add('seoFacebookDescription', TextType::class, [
+			->add('ogDescription', TextType::class, [
 				'required' => false
 			])
-			->add('seoFacebookImage', FileType::class, [
-				'required' => false
-			])
-
-			->add('seoTwitterTitle', TextType::class, [
-				'required' => false
-			])
-			->add('seoTwitterDescription', TextType::class, [
-				'required' => false
-			])
-			->add('seoTwitterImage', FileType::class, [
+			->add('ogImage', FileType::class, [
 				'required' => false
 			])
 
