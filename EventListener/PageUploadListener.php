@@ -53,19 +53,12 @@ class PageUploadListener {
 
 		$dir = $this->uploader->getTargetDirectory().'/'.$entity->getId();
 
-		$seoFacebookImage = $entity->getSeoFacebookImage();
-		$seoTwitterImage = $entity->getSeoTwitterImage();
+		$seoOgImage = $entity->getSeoOgImage();
 
-		if ($seoFacebookImage && file_exists($dir.'/'.$seoFacebookImage)) {
-			$entity->setSeoFacebookImage(new File($dir.'/'.$seoFacebookImage));
+		if ($seoOgImage && file_exists($dir.'/'.$seoOgImage)) {
+			$entity->setSeoOgImage(new File($dir.'/'.$seoOgImage));
 		} else{
-			$entity->setSeoFacebookImage(null);
-		}
-
-		if ($seoTwitterImage && file_exists($dir.'/'.$seoTwitterImage)) {
-			$entity->setSeoTwitterImage(new File($dir.'/'.$seoTwitterImage));
-		} else{
-			$entity->setSeoTwitterImage(null);
+			$entity->setSeoOgImage(null);
 		}
 	}
 
@@ -76,22 +69,15 @@ class PageUploadListener {
 			return;
 		}
 
-		$seoFacebookImage = $entity->getSeoFacebookImage();
+		$seoOgImage = $entity->getSeoOgImage();
 		$seoTwitterImage = $entity->getSeoTwitterImage();
 
 		// only upload new files
-		if ($seoFacebookImage instanceof UploadedFile) {
-			$imgName = $this->uploader->upload($seoFacebookImage, $this->uploader->getTargetDirectory().'/'.$entity->getId());
-			$entity->setSeoFacebookImage($imgName);
-		} elseif($seoFacebookImage instanceof File){
-			$entity->setSeoFacebookImage($seoFacebookImage->getFilename());
-		}
-
-		if ($seoTwitterImage instanceof UploadedFile) {
-			$imgName = $this->uploader->upload($seoTwitterImage, $this->uploader->getTargetDirectory().'/'.$entity->getId());
-			$entity->setSeoTwitterImage($imgName);
-		} elseif($seoTwitterImage instanceof File){
-			$entity->setSeoTwitterImage($seoTwitterImage->getFilename());
+		if ($seoOgImage instanceof UploadedFile) {
+			$imgName = $this->uploader->upload($seoOgImage, $this->uploader->getTargetDirectory().'/'.$entity->getId());
+			$entity->setSeoOgImage($imgName);
+		} elseif($seoOgImage instanceof File){
+			$entity->setSeoOgImage($seoOgImage->getFilename());
 		}
 
 	}
