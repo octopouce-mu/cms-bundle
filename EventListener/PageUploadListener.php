@@ -53,12 +53,12 @@ class PageUploadListener {
 
 		$dir = $this->uploader->getTargetDirectory().'/'.$entity->getId();
 
-		$seoOgImage = $entity->getSeoOgImage();
+		$ogImage = $entity->getOgImage();
 
-		if ($seoOgImage && file_exists($dir.'/'.$seoOgImage)) {
-			$entity->setSeoOgImage(new File($dir.'/'.$seoOgImage));
+		if ($ogImage && file_exists($dir.'/'.$ogImage)) {
+			$entity->setOgImage(new File($dir.'/'.$ogImage));
 		} else{
-			$entity->setSeoOgImage(null);
+			$entity->setOgImage(null);
 		}
 	}
 
@@ -69,15 +69,14 @@ class PageUploadListener {
 			return;
 		}
 
-		$seoOgImage = $entity->getSeoOgImage();
-		$seoTwitterImage = $entity->getSeoTwitterImage();
+		$ogImage = $entity->getOgImage();
 
 		// only upload new files
-		if ($seoOgImage instanceof UploadedFile) {
-			$imgName = $this->uploader->upload($seoOgImage, $this->uploader->getTargetDirectory().'/'.$entity->getId());
-			$entity->setSeoOgImage($imgName);
-		} elseif($seoOgImage instanceof File){
-			$entity->setSeoOgImage($seoOgImage->getFilename());
+		if ($ogImage instanceof UploadedFile) {
+			$imgName = $this->uploader->upload($ogImage, $this->uploader->getTargetDirectory().'/'.$entity->getId());
+			$entity->setOgImage($imgName);
+		} elseif($ogImage instanceof File){
+			$entity->setOgImage($ogImage->getFilename());
 		}
 
 	}
