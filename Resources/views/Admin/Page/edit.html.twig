@@ -55,7 +55,7 @@
                                 <div class="content">
                                     {% for field in page.fields %}
                                         <div class="row">
-                                            {% include '@OctopouceCms/Admin/Field/type/'~field.type~'.html.twig' with {'name': field.name, 'value': field.value} %}
+                                            {% include '@OctopouceCms/Admin/Field/type/'~field.type~'.html.twig' with {'name': field.name, 'slug': field.slug, 'value': field.value} %}
                                         </div>
                                     {% endfor %}
                                 </div>
