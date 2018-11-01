@@ -96,7 +96,7 @@
                         {{ form_row(form.publishedAt, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
                         {{ form_row(form.finishedAt, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
                         {{ form_row(form.parent, {'attr':{'disabled':page.editable or is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
-                        {{ form_row(form.submit) }}
+                        {{ form_row(form.submit, {'attr':{'class':'btn-block'}}) }}
                     </div>
                 </div>
             </div>
