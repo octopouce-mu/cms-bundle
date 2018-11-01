@@ -124,6 +124,7 @@ class Page
 	 * @var ArrayCollection
 	 *
 	 * @ORM\OneToMany(targetEntity="Octopouce\CmsBundle\Entity\Field", mappedBy="page", cascade={"persist", "remove"})
+	 * @ORM\OrderBy({"sort" = "ASC"})
 	 */
 	private $fields;
 

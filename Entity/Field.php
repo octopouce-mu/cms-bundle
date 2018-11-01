@@ -51,6 +51,13 @@ class Field
 	protected $value;
 
 	/**
+	 * @var int
+	 *
+	 * @ORM\Column(name="sort", type="integer", nullable=true))
+	 */
+	protected $sort;
+
+	/**
 	 * @var Page
 	 *
 	 * @ORM\ManyToOne(targetEntity="Octopouce\CmsBundle\Entity\Page", inversedBy="fields")
@@ -130,6 +137,23 @@ class Field
 	 */
 	public function setValue( $value ) {
 		$this->value = $value;
+
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getSort() {
+		return $this->sort;
+	}
+
+	/**
+	 * @param integer $sort
+	 * @return Field
+	 */
+	public function setSort( $sort ) {
+		$this->sort = $sort;
 
 		return $this;
 	}
