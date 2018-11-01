@@ -20,7 +20,6 @@ class PageUploadListener {
 	public function __construct(FileUploader $uploader)
 	{
 		$this->uploader = $uploader;
-		$uploader->setTargetDirectory('uploads/page');
 	}
 
 	public function postPersist(LifecycleEventArgs $args)
@@ -51,12 +50,10 @@ class PageUploadListener {
 			return;
 		}
 
-		$dir = $this->uploader->getTargetDirectory().'/'.$entity->getId();
-
 		$ogImage = $entity->getOgImage();
 
-		if ($ogImage && file_exists($dir.'/'.$ogImage)) {
-			$entity->setOgImage(new File($dir.'/'.$ogImage));
+		if ($ogImage && file_exists($ogImage)) {
+			$entity->setOgImage(new File($ogImage));
 		} else{
 			$entity->setOgImage(null);
 		}
@@ -73,7 +70,7 @@ class PageUploadListener {
 
 		// only upload new files
 		if ($ogImage instanceof UploadedFile) {
-			$imgName = $this->uploader->upload($ogImage, $this->uploader->getTargetDirectory().'/'.$entity->getId());
+			$imgName = $this->uploader->upload($ogImage, $entity->getId());
 			$entity->setOgImage($imgName);
 		} elseif($ogImage instanceof File){
 			$entity->setOgImage($ogImage->getFilename());
