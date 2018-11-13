@@ -6,30 +6,6 @@
     {% form_theme form '@OctopouceAdmin/Form/layout.html.twig' %}
 {% endif %}
 
-{% block sidebar_left_nav %}
-    {% if is_granted('ROLE_CMS') %}
-        <ul>
-            {#<li class="current">#}
-                {#<a href="{{ path('octopouce_cms_admin_post_index') }}">#}
-                    {#{{ 'header.sidebar.left.nav.post'|trans|raw }}#}
-                {#</a>#}
-            {#</li>#}
-            {#<li>#}
-                {#<a href="{{ path('octopouce_cms_admin_category_index') }}">#}
-                    {#{{ 'header.sidebar.left.nav.category'|trans|raw }}#}
-                {#</a>#}
-            {#</li>#}
-            {#<li>#}
-                {#<a href="{{ path('octopouce_cms_admin_tag_index') }}">#}
-                    {#{{ 'header.sidebar.left.nav.tag'|trans|raw }}#}
-                {#</a>#}
-            {#</li>#}
-        </ul>
-    {% else %}
-        {{ parent() }}
-    {% endif %}
-{% endblock %}
-
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/octopoucecms/css/cms.css') }}">
