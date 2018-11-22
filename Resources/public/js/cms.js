@@ -317,7 +317,7 @@ const tabsBlock = function(blockNumber, textarea) {
     // if data exist in database, set tabs, else init tabs
     if($('#page_blocks_'+blockNumber+'_value').text().length > 0) {
         var contentObject = $.parseJSON($('#page_blocks_'+blockNumber+'_value').val());
-        textarea.after('<div id="page_blocks_' + blockNumber + '_tabs"><button type="button" class="btn waves-effect waves-light" id="add-tab-' + blockNumber +'">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent"></ul></div>');
+        textarea.after('<div id="page_blocks_' + blockNumber + '_tabs" class="block-tabs"><button type="button" class="btn waves-effect waves-light" id="add-tab-' + blockNumber +'">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent"></ul></div>');
 
         contentObject.tabs.forEach(function(e, i){
             var number = i + 1;
@@ -332,7 +332,7 @@ const tabsBlock = function(blockNumber, textarea) {
             $('#page_blocks_' + blockNumber + '_tabs').append('<div id="page_blocks_'+blockNumber+'_tab_'+number+'" class="col s12 input-field tab-content"><textarea class="materialize-textarea">'+content+'</textarea></div>');
 
             ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tab_'+number+' textarea'), {
-                toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+                toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
                 heading: {
                     options: [
                         { model: 'paragraph', title: 'Paragraph' },
@@ -350,7 +350,7 @@ const tabsBlock = function(blockNumber, textarea) {
         });
 
     } else {
-        textarea.after('<div id="page_blocks_' + blockNumber + '_tabs"><button type="button" class="btn waves-effect waves-light" id="add-tab-' + blockNumber +'">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent">' +
+        textarea.after('<div id="page_blocks_' + blockNumber + '_tabs" class="block-tabs"><button type="button" class="btn waves-effect waves-light" id="add-tab-' + blockNumber +'">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent">' +
             '        <li class="tab col s2"><a class="active" href="#page_blocks_'+blockNumber+'_tab_1"><input type="text" placeholder="Tab1"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button></a></li>' +
             '      </ul>' +
             '    <div id="page_blocks_'+blockNumber+'_tab_1" class="col s12 input-field tab-content"><textarea class="materialize-textarea"></textarea></div>' +
@@ -358,7 +358,7 @@ const tabsBlock = function(blockNumber, textarea) {
 
         // transform textarea to wysiwyg
         ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tabs textarea'), {
-            toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+            toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
             heading: {
                 options: [
                     { model: 'paragraph', title: 'Paragraph' },
@@ -416,7 +416,7 @@ const addTab = function(blockNumber, textarea) {
 
         // transform textarea to wysiwyg
         ClassicEditor.create(document.querySelector('#page_blocks_'+blockNumber+'_tab_'+countTab+' textarea'), {
-            toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+            toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
             heading: {
                 options: [
                     { model: 'paragraph', title: 'Paragraph' },
@@ -546,7 +546,7 @@ const imageTextBlock = function(blockNumber, textarea) {
     }
 
     ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_imageText textarea'), {
-        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'alignment', 'bulletedList', 'numberedList', 'code', '|', 'undo', 'redo' ],
+        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'numberedList', '|', 'undo', 'redo' ],
         heading: {
             options: [
                 { model: 'paragraph', title: 'Paragraph' },

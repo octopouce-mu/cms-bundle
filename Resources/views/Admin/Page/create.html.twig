@@ -67,7 +67,9 @@
                 <div class="box">
                     <div class="content">
                         {{ form_row(form.enabled) }}
-                        <div class="hide">{{ form_row(form.editable) }}</div>
+                        {% if not is_granted('ROLE_SUPER_ADMIN') %}<div class="hide">{% endif %}
+                            {{ form_row(form.editable, {'attr':{'disabled':is_granted('ROLE_SUPER_ADMIN') ? false : true}}) }}
+                        {% if not is_granted('ROLE_SUPER_ADMIN') %}</div>{% endif %}
                         {{ form_row(form.publishedAt) }}
                         {{ form_row(form.finishedAt) }}
                         {{ form_row(form.parent) }}
