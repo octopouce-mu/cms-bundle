@@ -84,8 +84,8 @@ class PageController extends Controller
 
 			$fields = $request->request->get('fields');
 			if($fields) {
-				foreach ($fields as $slug => $value) {
-					$field = $em->getRepository(Field::class)->findOneBy(['slug' => $slug, 'page' => $page]);
+				foreach ($fields as $id => $value) {
+					$field = $em->getRepository(Field::class)->find($id);
 					if($field) {
 						$field->setValue($value);
 					}
@@ -95,9 +95,9 @@ class PageController extends Controller
 
 			$fields = $request->files->get('fields');
 			if($fields) {
-				foreach ($fields as $slug => $value) {
+				foreach ($fields as $id => $value) {
 					if($value) {
-						$field = $em->getRepository(Field::class)->findOneBy(['slug' => $slug, 'page' => $page]);
+						$field = $em->getRepository(Field::class)->find($id);
 						if($field) {
 							$fileSystem = new Filesystem();
 
