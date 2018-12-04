@@ -1,37 +1,94 @@
-CmsBundle
-===============
+OctopouceCmsBundle
+===================
 
-Introduction
+Prerequisites
+-------------
+
+This version of the bundle requires Symfony Flex (>= 4.0) and PHP 7.
+You want to use Doctrine ORM and MySQL.
+
+Installation
 ------------
-This Symfony bundle offers a manage website Cms.
 
-## Prerequisites
+1. Download OctopouceCmsBundle using composer
+2. Follow installation OctopouceAdminBundle
+3. Update your database schema
+4. Import OctopouceAdminBundle routing
+5. Publish the Assets
+6. Configure your file security
+7. Usage : Add adzone in page
 
-This version of the bundle requires Symfony Flex. 
+## Step 1: Download OctopouceCmsBundle using composer
 
-##Installation
+Require the bundle with composer:
 
-### Step 1: Download CmsBundle using composer
-This library is available on [Packagist](http://packagist.org/packages/octopouce-mu/cms-bundle).
+```bash
+$ composer require octopouce-mu/cms-bundle
 ```
-composer require octopouce-mu/cms-bundle
+
+## Step 2: Follow installation OctopouceAdminBundle
+
+For working the bundle, there needing OctopouceAdminBundle. Install dependencies bundles and configure.
+
+[OctopouceAdminBundle](https://github.com/octopouce-mu/admin-bundle)
+
+
+## Step 3: Update your database schema
+
+For ORM run the following command.
+
+```bash
+$ php bin/console doctrine:schema:update --force
 ```
-Composer will install the bundle to your project's `vendor/` directory.
 
-### Step 3: Setting AdminBundle
-You go to the documentation [OctopouceAdminBundle](http://packagist.org/packages/octopouce-mu/admin-bundle).
+**Caution**
 
-### Step 4: Import Octopouce Cms routing file
-Now that you have activated and configured the bundle, all that is left to do is import the routing files.
+If error "1071 Specified key was too long; max key length is 767 bytes", you change configs doctrine :
+
+
 ```yaml
-# config/routes/octopouce.yaml
+# config/packages/doctrine.yaml
+doctrine:
+    dbal:
+        charset: utf8
+        default_table_options:
+            charset: utf8
+            collate: utf8_unicode_ci
+```
 
+## Step 4: Import OctopouceCmsBundle routing files
+
+Now that you have activated and configured the bundle, all that is left to do is
+import the OctopouceCmsBundle routing files if Symfony Flex hasn't already imported the file.
+
+```yaml
+# config/routes/octopouce_cms.yaml
 _octopouce_cms:
-    resource: "@OctopouceCmsBundle/Resources/config/routing.yaml"
+    resource: "@OctopouceCmsBundle/Resources/config/routing/routing.yaml"
 ```
 
-### Step 5: Publish the Assets
-Now that you have activated and configured the bundle, all that is left to do is import the routing files.
+## Step 5: Publish the Assets
+
+```bash
+$ php bin/console assets:install --symlink
 ```
-php bin/console assets:install --symlink
+
+## Step 6: Configure your file security
+
+```yaml
+# config/packages/security.yaml
+security:
+    role_hierarchy:
+        ROLE_SHOW: ROLE_USER
+        ROLE_CMS: ROLE_SHOW
+        ROLE_ADMIN: [ROLE_CMS]
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
 ```
+
+Others bundles
+--------------
+
+You can to add bundles with OctopouceAdminBundle :
+
+- [OctopouceBlogBundle](https://github.com/octopouce-mu/blog-bundle)
+- [OctopouceAdvertisingBundle](https://github.com/octopouce-mu/advertising-bundle)
