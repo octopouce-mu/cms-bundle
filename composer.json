@@ -20,5 +20,10 @@
   },
   "autoload": {
     "psr-4": { "Octopouce\\CmsBundle\\": "" }
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": "true"
+    }
   }
 }
