@@ -1,0 +1,73 @@
+.block {
+    .sliders {
+        overflow: hidden;
+        li {
+            background-color: transparent;
+            position: relative;
+            width: 100px;
+            height: 100Px;
+            color: #fff;
+            font-size: 2em;
+            cursor: pointer;
+            float: left;
+            margin-right: 20px;
+            border: 1px dashed #fff;
+
+            b {
+                text-align: center;
+                font-size: 1rem;
+                display: none;
+            }
+
+            img {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+
+            .btn-remove {
+                background-color: #f44336;
+                color: #fff;
+                font-size: 1rem;
+                cursor: pointer;
+                position: absolute;
+                right: -10px;
+                top: -10px;
+                border: none;
+                padding: 0;
+                margin: 0;
+                width: 25px;
+                z-index: 1;
+                border-radius: 50%;
+                height: 25px;
+                display: none;
+            }
+
+            &:hover {
+                b {
+                    display: block;
+                }
+                img {
+                    opacity: .3;
+                }
+                .btn-remove {
+                    display: block;
+                }
+            }
+
+            &.add-slide {
+                border: 1px solid #fff;
+
+                button {
+                    background-color: transparent;
+                    width: 100px;
+                    height: 100Px;
+                    color: #fff;
+                    font-size: 2rem;
+                    cursor: pointer;
+                    border: none;
+                }
+            }
+        }
+    }
+}

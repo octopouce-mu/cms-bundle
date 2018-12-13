@@ -16,7 +16,7 @@
   "require": {
     "php": "^7.1.3",
     "symfony/framework-bundle": "^4.0",
-    "octopouce-mu/admin-bundle": "dev-master"
+    "octopouce-mu/admin-bundle": "dev-master|^1.0.0"
   },
   "autoload": {
     "psr-4": { "Octopouce\\CmsBundle\\": "" }

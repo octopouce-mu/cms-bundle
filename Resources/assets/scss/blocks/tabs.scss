@@ -1,0 +1,29 @@
+.block {
+    .block-tabs {
+        overflow: hidden;
+        .tabs {
+            li.tab {
+                a {
+                    position: relative;
+                }
+
+                .btn-remove {
+                    position: absolute;
+                    right: 23px;
+                    top: 14px;
+                    background: none;
+                    color: white;
+                    border: none;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 1.3rem;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #f44336;
+                    }
+                }
+            }
+        }
+    }
+}

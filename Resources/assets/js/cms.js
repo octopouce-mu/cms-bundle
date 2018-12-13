@@ -1,3 +1,8 @@
+require('materialize-css');
+
+// require jQuery normally
+const $ = require('jquery');
+
 let isChanged = false;
 
 $(document).ready(function () {
@@ -114,10 +119,13 @@ const sliderBlock = function(blockNumber, textarea) {
                 var li = '<li data-slide="' + i + '" data-img-id="' + e.image.id +'" data-title="' + e.title +'" data-description="' + e.description +'" data-img-path="' + img.path +'" class="slide"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button><b>' + e.title + '</b><img src="/' + img.path + '" width="98px" height="98px"></li>';
                 $('#page_blocks_' + blockNumber + '_sliders li.add-slide').before(li);
                 editSlide(blockNumber);
+                removeSlide(blockNumber, textarea);
             }).catch(function(){
                 countSlide++;
                 var li = '<li data-slide="' + i + '" data-img-id="' + e.image.id +'" data-title="' + e.title +'" data-description="' + e.description +'" data-img-path class="slide"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button><b>' + e.title + '</b><img src="" width="98px" height="98px"></li>';
                 $('#page_blocks_' + blockNumber + '_sliders li.add-slide').before(li);
+                removeSlide(blockNumber, textarea);
+
             });
         });
     }
@@ -205,6 +213,8 @@ const sliderBlock = function(blockNumber, textarea) {
                     // Create JSON value in input block_value
                     appendValueBySliders(blockNumber, textarea);
 
+                    removeSlide(blockNumber, textarea);
+
                     $('#page_blocks_' + blockNumber + '_sliders_modal').modal('close');
 
                 },
@@ -220,6 +230,8 @@ const sliderBlock = function(blockNumber, textarea) {
 
             // Create JSON value in input block_value
             appendValueBySliders(blockNumber, textarea);
+
+            removeSlide(blockNumber, textarea);
 
             $('#page_blocks_' + blockNumber + '_sliders_modal').modal('close');
 
@@ -245,6 +257,23 @@ const editSlide = function(blockNumber) {
         $('#page_blocks_' + blockNumber + '_sliders_modal .img-show').append('<img src="/' + data.imgPath + '" style="max-width: 100%">');
         $('#page_blocks_' + blockNumber + '_sliders_modal input[name="file"]').attr('required', false);
         M.updateTextFields();
+    });
+};
+
+/**
+ * Remove slide on click
+ * @param blockNumber
+ * @param textarea
+ */
+const removeSlide = function(blockNumber, textarea) {
+    $('#page_blocks_'+blockNumber+'_sliders li .btn-remove').on('click', function() {
+
+        console.log('remove slide');
+        $(this).parent().remove();
+
+        // Create JSON value in input block_value
+        appendValueBySliders(blockNumber, textarea);
+
     });
 };
 
