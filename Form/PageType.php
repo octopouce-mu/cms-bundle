@@ -26,10 +26,15 @@ class PageType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 
+		$disabled = $options['editable'] || $options['superadmin'] ? false : true;
+
 		$builder
-			->add('title', TextType::class)
+			->add('title', TextType::class, [
+				'disabled' => $disabled
+			])
 			->add('slug', TextType::class, [
-				'attr' => ['placeholder' => '']
+				'attr' => ['placeholder' => ''],
+				'disabled' => $disabled
 			])
 
 
@@ -47,21 +52,27 @@ class PageType extends AbstractType
 //			])
 
 			->add('enabled', SwitchType::class, [
-				'required' => false
+				'required' => false,
+				'disabled' => $disabled
 			])
 			->add('editable', SwitchType::class, [
-				'required' => false
+				'required' => false,
+				'disabled' => $options['superadmin'] ? false : true
 			])
-			->add('publishedAt', DatePickerType::class)
+			->add('publishedAt', DatePickerType::class, [
+				'disabled' => $disabled
+			])
 			->add('finishedAt', DatePickerType::class, [
-				'required' => false
+				'required' => false,
+				'disabled' => $disabled
 			])
 
 			->add('parent', EntityType::class, [
 				'class' => Page::class,
 				'choice_label' => 'title',
 				'placeholder' => 'Choose parent page',
-				'required' => false
+				'required' => false,
+				'disabled' => $disabled
 			])
 
 			->add('seoTitle', TextType::class, [
@@ -102,7 +113,9 @@ class PageType extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults([
-			'data_class' => Page::class
+			'data_class' => Page::class,
+			'superadmin' => false,
+			'editable'   => true
 		]);
 	}
 }

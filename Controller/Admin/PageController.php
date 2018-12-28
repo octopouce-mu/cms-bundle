@@ -64,21 +64,27 @@ class PageController extends Controller
 	/**
 	 * @Route("/{page}/edit", name="octopouce_cms_admin_page_edit")
 	 */
-	public function edit(Page $page, Request $request, EntityManagerInterface $em, FileUploader $fileUploader) : Response {
+	public function edit(Page $page, Request $request, EntityManagerInterface $em, FileUploader $fileUploader) : Response
+	{
 
 		$originalBlocks = new ArrayCollection();
 		foreach ($page->getBlocks() as $block) {
 			$originalBlocks->add($block);
 		}
 
-		$form = $this->createForm(PageType::class, $page);
+		$form = $this->createForm(PageType::class, $page, [
+			'superadmin' => $this->isGranted('ROLE_SUPER_ADMIN'),
+			'editable' => $page->isEditable()
+		]);
+
 
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
 
+
 			foreach ($originalBlocks as $block) {
 				if (false === $page->getBlocks()->contains($block)) {
-					 $em->remove($block);
+					$em->remove($block);
 				}
 			}
 
