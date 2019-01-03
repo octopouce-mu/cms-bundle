@@ -521,7 +521,7 @@ const imageTextBlock = function(blockNumber, textarea) {
     destroySlider(blockNumber, textarea);
     textarea.hide();
 
-    textarea.after('<div id="page_blocks_' + blockNumber + '_imageText">' +
+    textarea.after('<div id="page_blocks_' + blockNumber + '_imageText" class="imageText">' +
         '<div class="row"><div class="input-field col s12"><input type="text" name="titre"><label for="titre">Titre</label></div></div>' +
         '<div class="row"><div class="input-field col s12"><label for="description">Description</label><textarea class="materialize-textarea" name="description"></textarea></div></div>' +
         '<div class="row"><div class="col s12"><button class="btn add-img" type="button">Ajouter une image</button></div></div></div>' +
@@ -566,11 +566,13 @@ const imageTextBlock = function(blockNumber, textarea) {
         var description = $('#page_blocks_' + blockNumber + '_imageText textarea[name="description"]').text(contentObject.description);
 
         $.get( "/admin/file/api/" + contentObject.image.id, function( img ) {
-            $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="/' + img.path +'" width="100%">');
+            $('#page_blocks_' + blockNumber + '_imageText .add-img').after('<img data-img-title="'+ img.title +'" data-img-alt="'+ img.alt +'" data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="/' + img.path +'" width="300">');
             $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
+            editImageText(blockNumber);
         }).catch(function(){
-            $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="">');
+            $('#page_blocks_' + blockNumber + '_imageText .add-img').after('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="">');
             $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
+            editImageText(blockNumber);
         });
     }
 
@@ -612,7 +614,7 @@ const imageTextBlock = function(blockNumber, textarea) {
 
         var formData = new FormData($(this)[0]);
         var title = $(this).find('input[name="title"]');
-        var description = $(this).find('input[name="alt"]');
+        var alt = $(this).find('input[name="alt"]');
         var file = $(this).find('input[name="file"]');
         var fileText = $(this).find('input[name="file-text"]');
         var edit = $(this).find('input[name="edit"]');
@@ -628,13 +630,17 @@ const imageTextBlock = function(blockNumber, textarea) {
                 success: function (res) {
                      if(edit.val()) {
                         var image = $('#page_blocks_' + blockNumber + '_imageText img');
-                        image.data('imgId', res.id);
+                         image.data('imgTitle', title.val());
+                         image.data('imgAlt', alt.val());
+                         image.data('imgId', res.id);
                         image.data('imgPath', res.path);
                         image.attr('src', '/' + res.path);
-                    } else {
-                         $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-id="' + res.id +'" data-img-path="' + res.path +'" src="/' + res.path +'" width="100%">');
+                         editImageText(blockNumber);
+                     } else {
+                         $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-title="'+ title +'" data-img-alt="'+ alt +'" data-img-id="' + res.id +'" data-img-path="' + res.path +'" src="/' + res.path +'" width="300">');
                          $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
-                        // editSlide(blockNumber);
+                         editImageText(blockNumber);
+                         // editSlide(blockNumber);
                     }
 
                     // Create JSON value in input block_value
@@ -684,6 +690,24 @@ const appendValueByImageText = function (blockNumber, textarea) {
     $(textarea).html(JSON.stringify(contentObject));
     isChanged = true;
 
+};
+
+/**
+ * Edit imageText on click
+ * @param blockNumber
+ */
+const editImageText = function(blockNumber) {
+    $('#page_blocks_' + blockNumber + '_imageText img').on('click', function(){
+        var data = $(this).data();
+        $('#page_blocks_' + blockNumber + '_imageText_modal').modal('open');
+        $('#page_blocks_' + blockNumber + '_imageText_modal h4').text('Edit Image');
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="title"]').val(data.imgTitle);
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="alt"]').val(data.imgAlt);
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="edit"]').val(data.imgId);
+        $('#page_blocks_' + blockNumber + '_imageText_modal .img-show').append('<img src="/' + data.imgPath + '" style="max-width: 100%">');
+        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="file"]').attr('required', false);
+        M.updateTextFields();
+    });
 };
 
 /**
