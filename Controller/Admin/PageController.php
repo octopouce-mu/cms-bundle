@@ -88,11 +88,26 @@ class PageController extends Controller
 				}
 			}
 
+			// reset input checkbox to null value
+			$fieldsSwitch = $em->getRepository(Field::class)->findBy(['page' => $page, 'type' => 'switch']);
+			if($fieldsSwitch) {
+				foreach($fieldsSwitch as $field) {
+					$field->setValue(null);
+				}
+			}
+
+
 			$fields = $request->request->get('fields');
 			if($fields) {
 				foreach ($fields as $id => $value) {
 					$field = $em->getRepository(Field::class)->find($id);
 					if($field->getType() != 'file') {
+
+						// wysiwyg with value empty
+						if($value == '<p>&nbsp;</p>') {
+							$value = null;
+						}
+
 						$field->setValue($value);
 					} else {
 						if($field) {
