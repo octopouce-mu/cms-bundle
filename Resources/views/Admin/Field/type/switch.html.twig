@@ -1,0 +1,11 @@
+<div class="col s12">
+    {{ name }}
+    <div class="switch">
+        <label>
+            Off
+            <input type="checkbox" id="fields_{{ id }}" name="fields[{{ id }}]" class="filled-in" {% if value %}checked="checked"{% endif %}>
+            <span class="lever"></span>
+            On
+        </label>
+    </div>
+</div>
