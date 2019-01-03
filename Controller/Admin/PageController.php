@@ -92,8 +92,12 @@ class PageController extends Controller
 			if($fields) {
 				foreach ($fields as $id => $value) {
 					$field = $em->getRepository(Field::class)->find($id);
-					if($field) {
+					if($field->getType() != 'file') {
 						$field->setValue($value);
+					} else {
+						if($field) {
+							$field->setValue($value);
+						}
 					}
 				}
 			}
