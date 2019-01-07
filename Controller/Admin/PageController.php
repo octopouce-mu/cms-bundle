@@ -12,7 +12,7 @@ use Octopouce\AdminBundle\Utils\FileUploader;
 use Octopouce\CmsBundle\Entity\Field;
 use Octopouce\CmsBundle\Entity\Page;
 use Octopouce\CmsBundle\Form\PageType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @Route("/page")
  * @IsGranted("ROLE_CMS")
  */
-class PageController extends Controller
+class PageController extends AbstractController
 {
 	/**
 	 * @Route("/", name="octopouce_cms_admin_page_index")

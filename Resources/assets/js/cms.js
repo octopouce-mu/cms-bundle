@@ -268,7 +268,6 @@ const editSlide = function(blockNumber) {
 const removeSlide = function(blockNumber, textarea) {
     $('#page_blocks_'+blockNumber+'_sliders li .btn-remove').on('click', function() {
 
-        console.log('remove slide');
         $(this).parent().remove();
 
         // Create JSON value in input block_value
@@ -373,7 +372,9 @@ const tabsBlock = function(blockNumber, textarea) {
                 }
             } ).then(e => {
                     e.model.document.on( 'change:data', () => {
-                        appendValueByTabs(blockNumber, textarea);
+                        setTimeout(function() {
+                            appendValueByTabs(blockNumber, textarea);
+                        }, 100);
                     } );
                 });
         });
@@ -399,7 +400,9 @@ const tabsBlock = function(blockNumber, textarea) {
             }
         } ).then(e => {
                 e.model.document.on( 'change:data', () => {
-                    appendValueByTabs(blockNumber, textarea);
+                    setTimeout(function() {
+                        appendValueByTabs(blockNumber, textarea);
+                    }, 100);
                 } );
             });
     }
@@ -457,7 +460,9 @@ const addTab = function(blockNumber, textarea) {
             }
         }).then(e => {
                 e.model.document.on( 'change:data', () => {
-                    appendValueByTabs(blockNumber, textarea);
+                    setTimeout(function() {
+                        appendValueByTabs(blockNumber, textarea);
+                    }, 100);
                 } );
             });
 
@@ -590,7 +595,9 @@ const imageTextBlock = function(blockNumber, textarea) {
     } )
         .then(e => {
             e.model.document.on( 'change:data', () => {
-                appendValueByImageText(blockNumber, textarea);
+                setTimeout(function() {
+                    appendValueByImageText(blockNumber, textarea);
+                }, 100);
             } );
         });
 
