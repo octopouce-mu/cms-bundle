@@ -6,28 +6,38 @@
     <div class="padding-filter">
         <div class="row title">
             <div class="col s12">
-                <h1>Edit: {{ page.title }}</h1>
+                <h1>ACF : {{ page.title }}</h1>
             </div>
         </div>
         {{ form_start(form) }}
         <div class="row">
             <div class="col s12">
-                <div id="block-fields-list" data-prototype="{{ form_widget(form.fields.vars.prototype)|e }}"
-                     data-widget-tags="{{ '<div class="box block"></div>'|e }}">
+                <ul class="collapsible" id="fields-list" data-prototype="{{ form_widget(form.fields.vars.prototype)|e }}" style="border:none;"
+                     data-widget-fields="{{ '<li class="box ui-state-default"></li>'|e }}">
                     {% for blockField in form.fields %}
-                        <div class="box block draggable">
-                            <div class="content">
-                                <button type="button" class="waves-effect waves-light btn-small remove-block red"><i class="fas fa-times"></i></button>
+                        <li class="box ui-state-default">
+                            <div class="title collapsible-header transparent draggable">
+                                <span class="fas fa-sort draggable" style="cursor:move;"></span> {{ blockField.vars.value.name }}
+                                <div class="right">
+                                    <button type="button" class="waves-effect waves-light btn-small remove-field red"><span class="fas fa-times"></span></button>
+                                </div>
+                            </div>
+                            <div class="collapsible-body" style="border-bottom: none;">
                                 {{ form_errors(blockField) }}
                                 {{ form_widget(blockField) }}
                             </div>
-                        </div>
+                        </li>
                     {% endfor %}
-                </div>
+                </ul>
                 <p>
-                    <button type="button" class="add-another-collection-widget waves-effect waves-light btn"
-                            data-list="#block-fields-list">Add Field</button>
+                <button type="button" class="add-field-collection-widget btn"
+                        data-list="#fields-list">Add Field</button>
                 </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                {{ form_row(form.submit) }}
             </div>
         </div>
         {{ form_end(form) }}
@@ -39,39 +49,51 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function () {
-            var dataPositionList = {};
-            // $('.draggable').each(function (index) {
-            //     dataPositionList[index] = { 'id' : $(this).data("id"), 'position': $(this).data("position") };
-            // });
-            var fixHelperModified = function (e, tr) {
-                var $originals = tr.children();
-                var $helper = tr.clone();
-                $helper.children().each(function (index)
-                {
-                    $(this).width($originals.eq(index).width())
-                });
-                return $helper;
-            };
-            $('#block-fields-list').sortable({
-                // helper: fixHelperModified,
-                handle: ".content",
-                placeholder: "ui-state-highlight",
+            $('.collapsible').sortable({
+                handle: ".draggable",
                 axis: 'y',
-                container: '#block-fields-list',
-                {#update: function( event, ui ) {#}
-                    {#$.map($('tbody').find('.draggable'), function(el, index) {#}
-                        {#dataPositionList[index]['id'] = $(el).attr('data-id');#}
-                        {#dataPositionList[index]['position'] = index;#}
-                    {#});#}
-                    {#$.ajax({#}
-                        {#data: {data: dataPositionList, class:'{{ entities.0|getClass}}'},#}
-                        {#type: 'POST',#}
-                        {#url: Routing.generate('octopouce_admin_admin_sortable_drag'),#}
-                        {#success: function (data) {#}
-                        {#},#}
-                    {#});#}
-                {#}#}
+                container: '.collapsible',
+                update: function( event, ui ) {
+                   sortBlock();
+                }
+            });
+            $('.collapsible').collapsible();
+
+            removeBlock();
+
+            $('.add-field-collection-widget').click(function (e) {
+                let list = $($(this).attr('data-list'));
+                let counter = list.data('widget-counter') | list.children().length;
+                if (!counter) { counter = list.children().length; }
+
+                let newWidget = list.attr('data-prototype');
+                newWidget = newWidget.replace(/__name__/g, counter);
+                counter++;
+                list.data(' widget-counter', counter);
+
+                let newElem = $(list.attr('data-widget-fields')).html('<div class="title collapsible-header transparent draggable"><span class="fas fa-sort draggable" style="cursor:move;"></span> New '+ counter +' <div class="right"><button type="button" class="waves-effect waves-light btn-small remove-field red"><span class="fas fa-times"></span></button></div></div><div class="collapsible-body" style="border-bottom: none;">' + newWidget + '</div>');
+                newElem.appendTo(list);
+
+                $('select').formSelect();
+
+                $('.collapsible').collapsible();
+                removeBlock();
+                sortBlock();
             });
         });
+
+        const removeBlock = function() {
+            $('.remove-field').on('click', function() {
+                $(this).parent().parent().parent().remove();
+                sortBlock();
+            });
+        };
+
+        const sortBlock = function() {
+            $.map($('.collapsible').find('li.box'), function(el, index) {
+                var input = $(el).find('.sort')[0];
+                $(input).val(index);
+            });
+        }
     </script>
 {% endblock %}

@@ -54,15 +54,21 @@ class FieldController extends AbstractController
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
 
-
-//			foreach ($originalBlocks as $block) {
-//				if (false === $page->getBlocks()->contains($block)) {
-//					$em->remove($block);
-//				}
-//			}
+			$em = $this->getDoctrine()->getManager();
 
 
-			$this->getDoctrine()->getManager()->flush();
+			foreach ($originalFields as $block) {
+				if (false === $page->getFields()->contains($block)) {
+					$em->remove($block);
+				}
+			}
+
+			foreach ($page->getFields() as $key => $field) {
+				$field->setPage($page);
+			}
+
+
+			$em->flush();
 
 			$this->addFlash('success', 'page.edited');
 

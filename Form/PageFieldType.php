@@ -33,6 +33,10 @@ class PageFieldType extends AbstractType
 				'allow_add' => true,
 				'allow_delete' => true
 			])
+
+			->add('submit', SubmitType::class, [
+				'label' => 'save'
+			])
 		;
 	}
 
