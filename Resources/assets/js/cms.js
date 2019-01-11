@@ -30,7 +30,8 @@ $(document).ready(function () {
         $('select').formSelect();
 
         removeBlock();
-        changeBlock(counter - 1);
+        eachBlock();
+
     });
 
     $('#page_submit').on('click', function() {
@@ -51,88 +52,88 @@ const removeBlock = function() {
     });
 };
 
-
 const eachBlock = function() {
   $('.block').each(function() {
-      const blockNumber = $(this).children('div').children('div').attr('id').replace('page_blocks_', '');
-      initBlock(blockNumber);
-      changeBlock(blockNumber);
+      const blockNumber = $(this).children('div').children('div').attr('id');
+
+      initBlock($(this));
+      changeBlock($(this));
   })
 };
 
-const changeBlock = function(number) {
-    var id = $('#page_blocks_'+number+'_block').val();
-    $('#page_blocks_'+number+'_block').on('change', function () {
-        if(id != $(this).val()){
-            id = $('#page_blocks_'+number+'_block').val();
-            $('#page_blocks_'+number+'_value').text('');
-            initBlock(number);
+const changeBlock = function(block) {
+    var val = block.find('.select-block').val();
+    block.find('.select-block').on('change', function () {
+        if(val != $(this).val()){
+            initBlock(block);
         }
     });
 };
 
 
-const initBlock = function(blockNumber) {
-    const blockType = parseInt($('#page_blocks_' + blockNumber + '_block').val(), 0);
-    const textarea = $('#page_blocks_' + blockNumber + ' .textarea');
+const initBlock = function(block) {
+    const blockType = parseInt(block.find('.select-block').val(), 0);
+    const textarea = block.find('.textarea');
 
     switch (blockType) {
         case 5:
-            imageTextBlock(blockNumber, textarea);
+            imageTextBlock(block, textarea);
             break;
         case 4:
-            sliderBlock(blockNumber, textarea);
+            sliderBlock(block, textarea);
             break;
         case 3:
-            tabsBlock(blockNumber, textarea);
+            tabsBlock(block, textarea);
             break;
         case 2:
-            wysiwygBlock(blockNumber, textarea);
+            wysiwygBlock(block, textarea);
             break;
         default:
-            textBlock(blockNumber, textarea);
+            textBlock(block, textarea);
     }
 };
 
 /**
  * Set type block on Slider
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const sliderBlock = function(blockNumber, textarea) {
-    destroyWysiwyg(blockNumber, textarea);
-    destroyTabs(blockNumber, textarea);
-    destroyImageText(blockNumber, textarea);
+const sliderBlock = function(block, textarea) {
+    destroyWysiwyg(block, textarea);
+    destroyTabs(block, textarea);
+    destroyImageText(block, textarea);
 
     // init block
     textarea.hide();
-    textarea.after('<div id="page_blocks_' + blockNumber + '_sliders" class="sliders"><ul><li class="add-slide"><button type="button"><i class="fas fa-plus"></i></button></li></ul></div>');
+    textarea.after('<div class="block-sliders"><ul><li class="add-slide"><button type="button"><i class="fas fa-plus"></i></button></li></ul></div>');
     let countSlide = -1;
 
+    const blockId = block.children('div').children('div').attr('id');
+
     // if data exist in database, set sliders, else init
-    if($('#page_blocks_'+blockNumber+'_value').text().length > 0) {
-        var contentObject = $.parseJSON($('#page_blocks_' + blockNumber + '_value').val());
+    if(textarea.find('textarea').text().length > 0) {
+        var contentObject = $.parseJSON(textarea.find('textarea').val());
         contentObject.sliders.forEach(function(e, i) {
             $.get( "/admin/file/api/" + e.image.id, function( img ) {
                 countSlide++;
                 var li = '<li data-slide="' + i + '" data-img-id="' + e.image.id +'" data-title="' + e.title +'" data-description="' + e.description +'" data-img-path="' + img.path +'" class="slide"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button><b>' + e.title + '</b><img src="/' + img.path + '" width="98px" height="98px"></li>';
-                $('#page_blocks_' + blockNumber + '_sliders li.add-slide').before(li);
-                editSlide(blockNumber);
-                removeSlide(blockNumber, textarea);
+                block.find('.add-slide').before(li);
+                editSlide(blockId);
+                removeSlide(block, textarea);
             }).catch(function(){
                 countSlide++;
                 var li = '<li data-slide="' + i + '" data-img-id="' + e.image.id +'" data-title="' + e.title +'" data-description="' + e.description +'" data-img-path class="slide"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button><b>' + e.title + '</b><img src="" width="98px" height="98px"></li>';
-                $('#page_blocks_' + blockNumber + '_sliders li.add-slide').before(li);
-                removeSlide(blockNumber, textarea);
-
+                block.find('.add-slide').before(li);
+                editSlide(blockId);
+                removeSlide(block, textarea);
             });
         });
     }
 
     // create modal
-    $('.main').append('<div id="page_blocks_' + blockNumber + '_sliders_modal" class="modal modal-fixed-footer sliders-modal">' +
-        '<form class="form-slide" name="form-slide" method="post" enctype="multipart/form-data"><div class="modal-content">' +
+    $('.main').append('<div id="' + blockId + '_sliders_modal" class="modal modal-fixed-footer sliders-modal">' +
+        '<form class="form-slide" name="'+blockId+'_form" method="post" enctype="multipart/form-data"><div class="modal-content">' +
         '      <h4>Add slide</h4>' +
         '      <div class="row">' +
         '        <div class="input-field col s12">' +
@@ -161,25 +162,25 @@ const sliderBlock = function(blockNumber, textarea) {
         '       <input type="hidden" name="edit">' +
         '      <button type="submit" class="btn waves-effect waves-green">Add</button>' +
         '    </div></form></div>');
-    $('#page_blocks_' + blockNumber + '_sliders_modal').modal();
+    $('#' + blockId + '_sliders_modal').modal();
 
 
     // add slide
     $('li.add-slide button').on('click', function(){
-        $('#page_blocks_' + blockNumber + '_sliders_modal').modal('open');
-        $('#page_blocks_' + blockNumber + '_sliders_modal h4').text('Add slide');
-        $('#page_blocks_' + blockNumber + '_sliders_modal .img-show').html('');
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="title"]').val('');
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="description"]').val('');
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="fileText"]').val('');
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="edit"]').val('');
-        var file = $('#page_blocks_' + blockNumber + '_sliders_modal input[name="file"]');
+        $('#' + blockId + '_sliders_modal').modal('open');
+        $('#' + blockId + '_sliders_modal h4').text('Add slide');
+        $('#' + blockId + '_sliders_modal .img-show').html('');
+        $('#' + blockId + '_sliders_modal input[name="title"]').val('');
+        $('#' + blockId + '_sliders_modal input[name="description"]').val('');
+        $('#' + blockId + '_sliders_modal input[name="fileText"]').val('');
+        $('#' + blockId + '_sliders_modal input[name="edit"]').val('');
+        var file = $('#' + blockId + '_sliders_modal input[name="file"]');
         file.attr('required', true).replaceWith(file.val('').clone(true));
     });
 
 
     // form add slide with send data for register image in DB
-    $('form[name="form-slide"]').submit(function( event ) {
+    $('form[name="'+blockId+'_form"]').submit(function( event ) {
 
         var formData = new FormData($(this)[0]);
         var title = $(this).find('input[name="title"]');
@@ -198,24 +199,24 @@ const sliderBlock = function(blockNumber, textarea) {
                 async: true,
                 success: function (res) {
                     if(edit.val()) {
-                        var slide = $('#page_blocks_' + blockNumber + '_sliders ul li[data-slide="' + edit.val() + '"]');
+                        var slide = block.find('.block-sliders ul li[data-slide="' + edit.val() + '"]');
                         slide.data('title', title.val());
                         slide.data('description', description.val());
                         slide.data('imgId', res.id);
                         slide.data('imgPath', res.path);
-                        $('#page_blocks_' + blockNumber + '_sliders ul li[data-slide="' + edit.val() + '"] b').text(title.val());
-                        $('#page_blocks_' + blockNumber + '_sliders ul li[data-slide="' + edit.val() + '"] img').attr('src', '/' + res.path);
+                        slide.find('b').text(title.val());
+                        slide.find('img').attr('src', '/' + res.path);
                     } else {
-                        $('#page_blocks_' + blockNumber + '_sliders ul li.add-slide').before('<li data-slide="' + (countSlide + 1) + '" data-img-id="' + res.id +'" data-title="' + title.val() +'" data-description="' + description.val() +'" data-img-path="' + res.path +'" class="slide"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button><b>' + title.val() + '</b><img src="/' + res.path + '" width="98px" height="98px"></li>');
-                        editSlide(blockNumber);
+                        block.find('.add-slide').before('<li data-slide="' + (countSlide + 1) + '" data-img-id="' + res.id +'" data-title="' + title.val() +'" data-description="' + description.val() +'" data-img-path="' + res.path +'" class="slide"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button><b>' + title.val() + '</b><img src="/' + res.path + '" width="98px" height="98px"></li>');
+                        editSlide(blockId);
                     }
 
                     // Create JSON value in input block_value
-                    appendValueBySliders(blockNumber, textarea);
+                    appendValueBySliders(block, textarea);
 
-                    removeSlide(blockNumber, textarea);
+                    removeSlide(block, textarea);
 
-                    $('#page_blocks_' + blockNumber + '_sliders_modal').modal('close');
+                    $('#' + blockId + '_sliders_modal').modal('close');
 
                 },
                 cache: false,
@@ -223,17 +224,17 @@ const sliderBlock = function(blockNumber, textarea) {
                 processData: false
             });
         } else {
-            var slide = $('#page_blocks_' + blockNumber + '_sliders ul li[data-slide="' + edit.val() + '"]');
+            var slide = block.find('.block-sliders ul li[data-slide="' + edit.val() + '"]');
             slide.data('title', title.val());
             slide.data('description', description.val());
-            $('#page_blocks_' + blockNumber + '_sliders ul li[data-slide="' + edit.val() + '"] b').text(title.val());
+            slide.find('b').text(title.val());
 
             // Create JSON value in input block_value
-            appendValueBySliders(blockNumber, textarea);
+            appendValueBySliders(block, textarea);
 
-            removeSlide(blockNumber, textarea);
+            removeSlide(block, textarea);
 
-            $('#page_blocks_' + blockNumber + '_sliders_modal').modal('close');
+            $('#' + blockId + '_sliders_modal').modal('close');
 
         }
 
@@ -244,34 +245,35 @@ const sliderBlock = function(blockNumber, textarea) {
 
 /**
  * Edit slide on click
- * @param blockNumber
+ * @param blockId
  */
-const editSlide = function(blockNumber) {
+const editSlide = function(blockId) {
     $('li.slide').on('click', function(){
+        console.log('test');
         var data = $(this).data();
-        $('#page_blocks_' + blockNumber + '_sliders_modal').modal('open');
-        $('#page_blocks_' + blockNumber + '_sliders_modal h4').text('Edit slide');
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="title"]').val(data.title);
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="description"]').val(data.description);
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="edit"]').val(data.slide);
-        $('#page_blocks_' + blockNumber + '_sliders_modal .img-show').append('<img src="/' + data.imgPath + '" style="max-width: 100%">');
-        $('#page_blocks_' + blockNumber + '_sliders_modal input[name="file"]').attr('required', false);
+        $('#' + blockId + '_sliders_modal').modal('open');
+        $('#' + blockId + '_sliders_modal h4').text('Edit slide');
+        $('#' + blockId + '_sliders_modal input[name="title"]').val(data.title);
+        $('#' + blockId + '_sliders_modal input[name="description"]').val(data.description);
+        $('#' + blockId + '_sliders_modal input[name="edit"]').val(data.slide);
+        $('#' + blockId + '_sliders_modal .img-show').html('<img src="/' + data.imgPath + '" style="max-width: 100%">');
+        $('#' + blockId + '_sliders_modal input[name="file"]').attr('required', false);
         M.updateTextFields();
     });
 };
 
 /**
  * Remove slide on click
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const removeSlide = function(blockNumber, textarea) {
-    $('#page_blocks_'+blockNumber+'_sliders li .btn-remove').on('click', function() {
+const removeSlide = function(block, textarea) {
+    block.find('.block-sliders .btn-remove').on('click', function() {
 
         $(this).parent().remove();
 
         // Create JSON value in input block_value
-        appendValueBySliders(blockNumber, textarea);
+        appendValueBySliders(block, textarea);
 
     });
 };
@@ -279,16 +281,18 @@ const removeSlide = function(blockNumber, textarea) {
 /**
  * Create JSON value in input block_value sliders
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const appendValueBySliders = function (blockNumber, textarea) {
+const appendValueBySliders = function (block, textarea) {
     textarea = textarea.find('textarea');
     var contentObject = {'sliders': []};
 
-    let lis = $('#page_blocks_' + blockNumber + '_sliders .slide');
 
-    lis.each(function(i) {
+
+    let lis = block.find('.slide');
+
+    block.find('.slide').each(function(i) {
         var li = $(lis[i]);
         contentObject.sliders.push({'title': li.data('title'), 'description': li.data('description'), 'image': {'id': li.data('imgId')}});
     });
@@ -301,51 +305,55 @@ const appendValueBySliders = function (blockNumber, textarea) {
 /**
  * Set type block on Text
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const textBlock = function(blockNumber, textarea) {
-    destroyWysiwyg(blockNumber, textarea);
-    destroyTabs(blockNumber, textarea);
-    destroySlider(blockNumber, textarea);
-    destroyImageText(blockNumber, textarea);
+const textBlock = function(block, textarea) {
+    destroyWysiwyg(block, textarea);
+    destroyTabs(block, textarea);
+    destroySlider(block, textarea);
+    destroyImageText(block, textarea);
 };
 
 /**
  * Set type block on Wysiwyg
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const wysiwygBlock = function(blockNumber, textarea) {
-    destroyTabs(blockNumber, textarea);
-    destroySlider(blockNumber, textarea);
-    destroyImageText(blockNumber, textarea);
+const wysiwygBlock = function(block, textarea) {
+    destroyTabs(block, textarea);
+    destroySlider(block, textarea);
+    destroyImageText(block, textarea);
 
-    ClassicEditor.create(document.querySelector('#page_blocks_' + blockNumber + '_value'));
+    const blockId = block.children('div').children('div').attr('id');
+
+    ClassicEditor.create(document.querySelector('#' + blockId + '_value'));
 
 };
 
 /**
  * Set type block on Tabs
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const tabsBlock = function(blockNumber, textarea) {
+const tabsBlock = function(block, textarea) {
 
     // init block
-    destroyWysiwyg(blockNumber, textarea);
-    destroySlider(blockNumber, textarea);
-    destroyImageText(blockNumber, textarea);
+    destroyWysiwyg(block, textarea);
+    destroySlider(block, textarea);
+    destroyImageText(block, textarea);
 
     textarea.hide();
 
+    const blockId = block.children('div').children('div').attr('id');
+
 
     // if data exist in database, set tabs, else init tabs
-    if($('#page_blocks_'+blockNumber+'_value').text().length > 0) {
-        var contentObject = $.parseJSON($('#page_blocks_'+blockNumber+'_value').val());
-        textarea.after('<div id="page_blocks_' + blockNumber + '_tabs" class="block-tabs"><button type="button" class="btn waves-effect waves-light" id="add-tab-' + blockNumber +'">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent"></ul></div>');
+    if(textarea.find('textarea').text().length > 0) {
+        var contentObject = $.parseJSON(textarea.find('textarea').val());
+        textarea.after('<div class="block-tabs"><button type="button" class="btn waves-effect waves-light add-tab">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent"></ul></div>');
 
         contentObject.tabs.forEach(function(e, i){
             var number = i + 1;
@@ -356,10 +364,10 @@ const tabsBlock = function(blockNumber, textarea) {
             var title = e.title ? e.title : '';
             var content = e.content ? e.content : '';
 
-            $('#page_blocks_' + blockNumber + '_tabs ul').append('<li class="tab col s2"><a class="'+liClass+'" href="#page_blocks_'+blockNumber+'_tab_'+number+'"><input type="text" placeholder="Tab'+number+'" value="'+title+'"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button></a></li>');
-            $('#page_blocks_' + blockNumber + '_tabs').append('<div id="page_blocks_'+blockNumber+'_tab_'+number+'" class="col s12 input-field tab-content"><textarea class="materialize-textarea">'+content+'</textarea></div>');
+            block.find('ul').append('<li class="tab col s2"><a class="'+liClass+'" href="#'+blockId+'_tab_'+number+'"><input type="text" placeholder="Tab'+number+'" value="'+title+'"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button></a></li>');
+            block.find('.block-tabs').append('<div id="'+blockId+'_tab_'+number+'" class="col s12 input-field tab-content"><textarea class="materialize-textarea">'+content+'</textarea></div>');
 
-            ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tab_'+number+' textarea'), {
+            ClassicEditor.create( document.querySelector('#' + blockId + '_tab_'+number+' textarea'), {
                 toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
                 heading: {
                     options: [
@@ -373,21 +381,21 @@ const tabsBlock = function(blockNumber, textarea) {
             } ).then(e => {
                     e.model.document.on( 'change:data', () => {
                         setTimeout(function() {
-                            appendValueByTabs(blockNumber, textarea);
+                            appendValueByTabs(block, textarea);
                         }, 100);
                     } );
                 });
         });
 
     } else {
-        textarea.after('<div id="page_blocks_' + blockNumber + '_tabs" class="block-tabs"><button type="button" class="btn waves-effect waves-light" id="add-tab-' + blockNumber +'">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent">' +
-            '        <li class="tab col s2"><a class="active" href="#page_blocks_'+blockNumber+'_tab_1"><input type="text" placeholder="Tab1"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button></a></li>' +
+        textarea.after('<div class="block-tabs"><button type="button" class="btn waves-effect waves-light add-tab">Add tab <i class="fas fa-plus"></i></button><ul class="tabs transparent">' +
+            '        <li class="tab col s2"><a class="active" href="#'+blockId+'_tab_1"><input type="text" placeholder="Tab1"><button type="button" class="btn-remove"><i class="fas fa-times"></i></button></a></li>' +
             '      </ul>' +
-            '    <div id="page_blocks_'+blockNumber+'_tab_1" class="col s12 input-field tab-content"><textarea class="materialize-textarea"></textarea></div>' +
+            '    <div id="'+blockId+'_tab_1" class="col s12 input-field tab-content"><textarea class="materialize-textarea"></textarea></div>' +
             '  </div>');
 
         // transform textarea to wysiwyg
-        ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_tabs textarea'), {
+        ClassicEditor.create( document.querySelector('#' + blockId + '_tab_1 textarea'), {
             toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
             heading: {
                 options: [
@@ -401,7 +409,7 @@ const tabsBlock = function(blockNumber, textarea) {
         } ).then(e => {
                 e.model.document.on( 'change:data', () => {
                     setTimeout(function() {
-                        appendValueByTabs(blockNumber, textarea);
+                        appendValueByTabs(block, textarea);
                     }, 100);
                 } );
             });
@@ -411,43 +419,45 @@ const tabsBlock = function(blockNumber, textarea) {
     $('.tabs').tabs();
 
     // remove tab
-    removeTab(blockNumber, textarea);
+    removeTab(block, textarea);
 
     // load button add tab
-    addTab(blockNumber, textarea);
+    addTab(block, textarea);
 
     // create JSON when a title tab change
-    $('#page_blocks_' + blockNumber + '_tabs input').change(function () {
-        appendValueByTabs(blockNumber, textarea);
+    block.find('input').change(function () {
+        appendValueByTabs(block, textarea);
     });
 };
 
 /**
  * Add one tab in tabs block
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const addTab = function(blockNumber, textarea) {
-    let pageBlock = $('#page_blocks_' + blockNumber + '_tabs');
+const addTab = function(block, textarea) {
+    let pageBlock = block.find('.block-tabs');
 
     let countTab = pageBlock.find('.tab').length;
+    const blockId = block.children('div').children('div').attr('id');
 
-    $('#add-tab-' + blockNumber).on('click', function () {
+
+    pageBlock.find('.add-tab').on('click', function () {
 
         countTab++;
 
         // add li in ul
         pageBlock.find('ul').append('<li class="tab col s2">' +
-            '<a href="#page_blocks_'+blockNumber+'_tab_'+countTab+'">' +
+            '<a href="#'+blockId+'_tab_'+countTab+'">' +
             '<input type="text" placeholder="Tab'+countTab+'">' +
             '<button type="button" class="btn-remove"><i class="fas fa-times"></i></button></a>' +
             '</li>');
 
         // add content in tab
-        pageBlock.append('<div id="page_blocks_'+blockNumber+'_tab_'+countTab+'" class="col s12 input-field tab-content"><textarea class="materialize-textarea tab-area"></textarea></div>');
+        pageBlock.append('<div id="'+blockId+'_tab_'+countTab+'" class="col s12 input-field tab-content"><textarea class="materialize-textarea tab-area"></textarea></div>');
 
         // transform textarea to wysiwyg
-        ClassicEditor.create(document.querySelector('#page_blocks_'+blockNumber+'_tab_'+countTab+' textarea'), {
+        ClassicEditor.create(document.querySelector('#'+blockId+'_tab_'+countTab+' textarea'), {
             toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
             heading: {
                 options: [
@@ -461,7 +471,7 @@ const addTab = function(blockNumber, textarea) {
         }).then(e => {
                 e.model.document.on( 'change:data', () => {
                     setTimeout(function() {
-                        appendValueByTabs(blockNumber, textarea);
+                        appendValueByTabs(block, textarea);
                     }, 100);
                 } );
             });
@@ -470,18 +480,18 @@ const addTab = function(blockNumber, textarea) {
         $('.tabs').tabs();
 
         // remove tab
-        removeTab(blockNumber, textarea);
+        removeTab(block, textarea);
     })
 };
 
 /**
  * Remove tab in tabs block
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const removeTab = function(blockNumber, textarea) {
-    $('#page_blocks_'+blockNumber+'_tabs li .btn-remove').on('click', function() {
+const removeTab = function(block, textarea) {
+    block.find('.block-tabs .btn-remove').on('click', function() {
 
         var content = $($(this).parent('a').attr('href'));
         var li = $(this).parent().parent();
@@ -489,7 +499,7 @@ const removeTab = function(blockNumber, textarea) {
         content.remove();
         li.remove();
 
-        appendValueByTabs(blockNumber, textarea);
+        appendValueByTabs(block, textarea);
 
     });
 };
@@ -497,16 +507,16 @@ const removeTab = function(blockNumber, textarea) {
 /**
  * Create JSON value in input block_value
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const appendValueByTabs = function (blockNumber, textarea) {
+const appendValueByTabs = function (block, textarea) {
     textarea = textarea.find('textarea');
 
     var contentObject = {'tabs': []};
 
-    let lis = $('#page_blocks_' + blockNumber + '_tabs .tab');
-    let contents = $('#page_blocks_' + blockNumber + '_tabs').find('.tab-content');
+    let lis = block.find('.tab');
+    let contents = block.find('.tab-content');
 
     lis.each(function(i) {
         var title = $(this).find('input').val();
@@ -519,22 +529,24 @@ const appendValueByTabs = function (blockNumber, textarea) {
 
 };
 
-const imageTextBlock = function(blockNumber, textarea) {
+const imageTextBlock = function(block, textarea) {
     // init block
-    destroyWysiwyg(blockNumber, textarea);
-    destroyTabs(blockNumber, textarea);
-    destroySlider(blockNumber, textarea);
+    destroyWysiwyg(block, textarea);
+    destroyTabs(block, textarea);
+    destroySlider(block, textarea);
     textarea.hide();
 
-    textarea.after('<div id="page_blocks_' + blockNumber + '_imageText" class="imageText">' +
+    const blockId = block.children('div').children('div').attr('id');
+
+    textarea.after('<div class="block-image-text">' +
         '<div class="row"><div class="input-field col s12"><input type="text" name="titre"><label for="titre">Titre</label></div></div>' +
-        '<div class="row"><div class="input-field col s12"><label for="description">Description</label><textarea class="materialize-textarea" name="description"></textarea></div></div>' +
-        '<div class="row"><div class="col s12"><button class="btn add-img" type="button">Ajouter une image</button></div></div></div>' +
+        '<div class="row"><div class="input-field col s12"><label for="description">Description</label><textarea class="materialize-textarea" name="description" id="'+blockId+'_textarea"></textarea></div></div>' +
+        '<div class="row"><div class="col s12 add-img"><button class="btn" type="button">Ajouter une image</button></div></div></div>' +
     '</div>');
 
     // create modal
-    $('.main').append('<div id="page_blocks_' + blockNumber + '_imageText_modal" class="modal modal-fixed-footer imageText-modal">' +
-        '<form class="form-imageText" name="form-imageText" method="post" enctype="multipart/form-data"><div class="modal-content">' +
+    $('.main').append('<div id="' + blockId + '_image-text_modal" class="modal modal-fixed-footer image-text-modal">' +
+        '<form class="form-image-text" name="' + blockId + '_form-image-text" method="post" enctype="multipart/form-data"><div class="modal-content">' +
         '      <h4>Add image</h4>' +
         '      <div class="row">' +
         '        <div class="input-field col s12">' +
@@ -563,25 +575,35 @@ const imageTextBlock = function(blockNumber, textarea) {
         '       <input type="hidden" name="edit">' +
         '      <button type="submit" class="btn waves-effect waves-green">Add</button>' +
         '    </div></form></div>');
-    $('#page_blocks_' + blockNumber + '_imageText_modal').modal();
+    $('#' + blockId + '_image-text_modal').modal();
 
-    if($('#page_blocks_' + blockNumber + '_value').text().length > 0) {
-        var contentObject = $.parseJSON($('#page_blocks_' + blockNumber + '_value').val());
-        var titre = $('#page_blocks_' + blockNumber + '_imageText input[name="titre"]').val(contentObject.title);
-        var description = $('#page_blocks_' + blockNumber + '_imageText textarea[name="description"]').text(contentObject.description);
+    if(textarea.find('textarea').text().length > 0) {
+        var contentObject = $.parseJSON(textarea.find('textarea').val());
+        block.find('.add-img').html('<div class="preloader-wrapper small active">\n' +
+            '      <div class="spinner-layer spinner-blue">\n' +
+            '        <div class="circle-clipper left">\n' +
+            '          <div class="circle"></div>\n' +
+            '        </div><div class="gap-patch">\n' +
+            '          <div class="circle"></div>\n' +
+            '        </div><div class="circle-clipper right">\n' +
+            '          <div class="circle"></div>\n' +
+            '        </div>\n' +
+            '      </div></div>');
 
         $.get( "/admin/file/api/" + contentObject.image.id, function( img ) {
-            $('#page_blocks_' + blockNumber + '_imageText .add-img').after('<img data-img-title="'+ img.title +'" data-img-alt="'+ img.alt +'" data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="/' + img.path +'" width="300">');
-            $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
-            editImageText(blockNumber);
+            block.find('.add-img').append('<img data-img-title="'+ img.title +'" data-img-alt="'+ img.alt +'" data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="/' + img.path +'" width="300">');
+            block.find('.add-img btn').remove();
+            block.find('.preloader-wrapper').remove();
+            editImageText(block);
         }).catch(function(){
-            $('#page_blocks_' + blockNumber + '_imageText .add-img').after('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="">');
-            $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
-            editImageText(blockNumber);
+            block.find('.add-img').append('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="">');
+            block.find('.add-img btn').remove();
+            block.find('.preloader-wrapper').remove();
+            editImageText(block);
         });
     }
 
-    ClassicEditor.create( document.querySelector('#page_blocks_' + blockNumber + '_imageText textarea'), {
+    ClassicEditor.create( document.querySelector('#' + blockId + '_textarea'), {
         toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'numberedList', '|', 'undo', 'redo' ],
         heading: {
             options: [
@@ -596,28 +618,28 @@ const imageTextBlock = function(blockNumber, textarea) {
         .then(e => {
             e.model.document.on( 'change:data', () => {
                 setTimeout(function() {
-                    appendValueByImageText(blockNumber, textarea);
+                    appendValueByImageText(block, textarea);
                 }, 100);
             } );
         });
 
 
     // add image
-    $('button.add-img').on('click', function(){
-        $('#page_blocks_' + blockNumber + '_imageText_modal').modal('open');
-        $('#page_blocks_' + blockNumber + '_imageText_modal h4').text('Add image');
-        $('#page_blocks_' + blockNumber + '_imageText_modal .img-show').html('');
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="title"]').val('');
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="alt"]').val('');
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="fileText"]').val('');
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="edit"]').val('');
-        var file = $('#page_blocks_' + blockNumber + '_imageText_modal input[name="file"]');
+    block.find('.add-img btn').on('click', function(){
+        $('#' + blockId + '_image-text_modal').modal('open');
+        $('#' + blockId + '_image-text_modal h4').text('Add image');
+        $('#' + blockId + '_image-text_modal .img-show').html('');
+        $('#' + blockId + '_image-text_modal input[name="title"]').val('');
+        $('#' + blockId + '_image-text_modal input[name="alt"]').val('');
+        $('#' + blockId + '_image-text_modal input[name="fileText"]').val('');
+        $('#' + blockId + '_image-text_modal input[name="edit"]').val('');
+        var file = $('#' + blockId + '_image-text_modal input[name="file"]');
         file.attr('required', true).replaceWith(file.val('').clone(true));
     });
 
 
-    // form add slide with send data for register image in DB
-    $('form[name="form-imageText"]').submit(function( event ) {
+    // form add img with send data for register image in DB
+    block.find('form[name="form-image-text"]').submit(function( event ) {
 
         var formData = new FormData($(this)[0]);
         var title = $(this).find('input[name="title"]');
@@ -636,24 +658,23 @@ const imageTextBlock = function(blockNumber, textarea) {
                 async: true,
                 success: function (res) {
                      if(edit.val()) {
-                        var image = $('#page_blocks_' + blockNumber + '_imageText img');
+                        var image = block.find('img');
                          image.data('imgTitle', title.val());
                          image.data('imgAlt', alt.val());
                          image.data('imgId', res.id);
                         image.data('imgPath', res.path);
                         image.attr('src', '/' + res.path);
-                         editImageText(blockNumber);
+                         editImageText(block);
                      } else {
-                         $('#page_blocks_' + blockNumber + '_imageText .add-img').before('<img data-img-title="'+ title +'" data-img-alt="'+ alt +'" data-img-id="' + res.id +'" data-img-path="' + res.path +'" src="/' + res.path +'" width="300">');
-                         $('#page_blocks_' + blockNumber + '_imageText .add-img').remove();
-                         editImageText(blockNumber);
-                         // editSlide(blockNumber);
+                         block.find('.add-img').append('<img data-img-title="'+ title +'" data-img-alt="'+ alt +'" data-img-id="' + res.id +'" data-img-path="' + res.path +'" src="/' + res.path +'" width="300">');
+                         block.find('.add-img btn').remove();
+                         editImageText(block);
                     }
 
                     // Create JSON value in input block_value
-                    appendValueByImageText(blockNumber, textarea);
+                    appendValueByImageText(block, textarea);
 
-                    $('#page_blocks_' + blockNumber + '_imageText_modal').modal('close');
+                    $('#' + blockId + '_image-text_modal').modal('close');
 
                 },
                 cache: false,
@@ -661,12 +682,10 @@ const imageTextBlock = function(blockNumber, textarea) {
                 processData: false
             });
         } else {
-            var image = $('#page_blocks_' + blockNumber + '_imageText img');
-
             // Create JSON value in input block_value
-            appendValueByImageText(blockNumber, textarea);
+            appendValueByImageText(block, textarea);
 
-            $('#page_blocks_' + blockNumber + '_imageText_modal').modal('close');
+            $('#' + blockId + '_image-text_modal').modal('close');
 
         }
 
@@ -679,20 +698,18 @@ const imageTextBlock = function(blockNumber, textarea) {
 /**
  * Create JSON value in input block_value image
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const appendValueByImageText = function (blockNumber, textarea) {
+const appendValueByImageText = function (block, textarea) {
     textarea = textarea.find('textarea');
-    var contentObject = {};
 
-    let content = $('#page_blocks_' + blockNumber + '_imageText');
-    var titre = $('#page_blocks_' + blockNumber + '_imageText input[name="titre"]').val();
-    var description = $('#page_blocks_' + blockNumber + '_imageText').find('.ck-content').html();
-    var image = $('#page_blocks_' + blockNumber + '_imageText img');
+    var titre = block.find('input[name="titre"').val();
+    var description = block.find('.ck-content').html();
+    var image = block.find('img');
 
 
-    contentObject = {'title': titre, 'description': description, 'image': {'id': image.data('imgId')}};
+    var contentObject = {'title': titre, 'description': description, 'image': {'id': image.data('imgId')}};
 
     $(textarea).html(JSON.stringify(contentObject));
     isChanged = true;
@@ -701,18 +718,20 @@ const appendValueByImageText = function (blockNumber, textarea) {
 
 /**
  * Edit imageText on click
- * @param blockNumber
+ * @param block
  */
-const editImageText = function(blockNumber) {
-    $('#page_blocks_' + blockNumber + '_imageText img').on('click', function(){
+const editImageText = function(block) {
+    const blockId = block.children('div').children('div').attr('id');
+
+    block.find('img').on('click', function(){
         var data = $(this).data();
-        $('#page_blocks_' + blockNumber + '_imageText_modal').modal('open');
-        $('#page_blocks_' + blockNumber + '_imageText_modal h4').text('Edit Image');
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="title"]').val(data.imgTitle);
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="alt"]').val(data.imgAlt);
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="edit"]').val(data.imgId);
-        $('#page_blocks_' + blockNumber + '_imageText_modal .img-show').append('<img src="/' + data.imgPath + '" style="max-width: 100%">');
-        $('#page_blocks_' + blockNumber + '_imageText_modal input[name="file"]').attr('required', false);
+        $('#' + blockId + '_image-text_modal').modal('open');
+        $('#' + blockId + '_image-text_modal h4').text('Edit Image');
+        $('#' + blockId + '_image-text_modal input[name="title"]').val(data.imgTitle);
+        $('#' + blockId + '_image-text_modal input[name="alt"]').val(data.imgAlt);
+        $('#' + blockId + '_image-text_modal input[name="edit"]').val(data.imgId);
+        $('#' + blockId + '_image-text_modal .img-show').html('<img src="/' + data.imgPath + '" style="max-width: 100%">');
+        $('#' + blockId + '_image-text_modal input[name="file"]').attr('required', false);
         M.updateTextFields();
     });
 };
@@ -720,43 +739,43 @@ const editImageText = function(blockNumber) {
 /**
  * Destroy the type block Wysiwyg
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const destroyWysiwyg = function(blockNumber, textarea) {
-    $('#page_blocks_' + blockNumber + ' .ck').remove();
+const destroyWysiwyg = function(block, textarea) {
+    block.find('.ck').remove();
     textarea.find('textarea').show();
 };
 
 /**
  * Destroy the type block Tabs
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const destroyTabs = function(blockNumber, textarea) {
-    $('#page_blocks_' + blockNumber + '_tabs').remove();
+const destroyTabs = function(block, textarea) {
+    block.find('.block-tabs').remove();
     textarea.show().find('textarea').show();
 };
 
 /**
  * Destroy the type block Slider
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const destroySlider = function(blockNumber, textarea) {
-    $('#page_blocks_' + blockNumber + '_sliders').remove();
+const destroySlider = function(block, textarea) {
+    block.find('.block-sliders').remove();
     textarea.show().find('textarea').show();
 };
 
 /**
  * Destroy the type block ImageText
  *
- * @param blockNumber
+ * @param block
  * @param textarea
  */
-const destroyImageText = function(blockNumber, textarea) {
-    $('#page_blocks_' + blockNumber + '_imageText').remove();
+const destroyImageText = function(block, textarea) {
+    block.find('.block-image-text').remove();
     textarea.show().find('textarea').show();
 };

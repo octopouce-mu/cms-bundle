@@ -61,9 +61,15 @@ class Field
 	 * @var Page
 	 *
 	 * @ORM\ManyToOne(targetEntity="Octopouce\CmsBundle\Entity\Page", inversedBy="fields")
-	 * @ORM\JoinColumn(nullable=false)
 	 */
 	private $page;
+
+	/**
+	 * @var PageTranslation
+	 *
+	 * @ORM\ManyToOne(targetEntity="Octopouce\CmsBundle\Entity\PageTranslation", inversedBy="fields")
+	 */
+	private $pageTranslation;
 
 
 	/**
@@ -180,5 +186,29 @@ class Field
 	public function getPage()
 	{
 		return $this->page;
+	}
+
+	/**
+	 * Set pageTranslation.
+	 *
+	 * @param PageTranslation $pageTranslation
+	 *
+	 * @return Field
+	 */
+	public function setPageTranslation(PageTranslation $pageTranslation)
+	{
+		$this->pageTranslation = $pageTranslation;
+
+		return $this;
+	}
+
+	/**
+	 * Get pageTranslation.
+	 *
+	 * @return PageTranslation
+	 */
+	public function getPageTranslation()
+	{
+		return $this->pageTranslation;
 	}
 }

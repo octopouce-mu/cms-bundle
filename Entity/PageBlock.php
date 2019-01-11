@@ -54,9 +54,15 @@ class PageBlock
 	 * @var Page
 	 *
 	 * @ORM\ManyToOne(targetEntity="Octopouce\CmsBundle\Entity\Page", inversedBy="blocks")
-	 * @ORM\JoinColumn(nullable=false)
 	 */
 	private $page;
+
+	/**
+	 * @var PageTranslation
+	 *
+	 * @ORM\ManyToOne(targetEntity="Octopouce\CmsBundle\Entity\PageTranslation", inversedBy="blocks")
+	 */
+	private $pageTranslation;
 
 	/**
 	 * @var Block
@@ -190,6 +196,30 @@ class PageBlock
 	public function getPage()
 	{
 		return $this->page;
+	}
+
+	/**
+	 * Set pageTranslation.
+	 *
+	 * @param PageTranslation $pageTranslation
+	 *
+	 * @return PageBlock
+	 */
+	public function setPageTranslation(PageTranslation $pageTranslation)
+	{
+		$this->pageTranslation = $pageTranslation;
+
+		return $this;
+	}
+
+	/**
+	 * Get pageTranslation.
+	 *
+	 * @return PageTranslation
+	 */
+	public function getPageTranslation()
+	{
+		return $this->pageTranslation;
 	}
 
 	/**

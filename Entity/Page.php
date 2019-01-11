@@ -4,6 +4,7 @@ namespace Octopouce\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Knp\DoctrineBehaviors\Model as ORMBehaviors;
 
 /**
  * Page
@@ -13,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Page
 {
+	use ORMBehaviors\Translatable\Translatable;
+
 	/**
 	 * @var int
 	 *
@@ -32,7 +35,7 @@ class Page
 	/**
 	 * @var string
 	 *
-	 * @ORM\Column(name="slug", type="string", length=255, unique=true)
+	 * @ORM\Column(name="slug", type="string", length=255)
 	 */
 	protected $slug;
 
@@ -132,6 +135,10 @@ class Page
 		return $this->getTitle();
 	}
 
+//	public function __call($method, $arguments)
+//	{
+//		return $this->proxyCurrentLocaleTranslation($method, $arguments);
+//	}
 
 	/**
 	 * Page constructor.
@@ -142,6 +149,7 @@ class Page
 		$this->publishedAt = new \DateTime('now');
 		$this->createdAt   = new \DateTime('now');
 		$this->fields      = new ArrayCollection();
+		$this->blocks      = new ArrayCollection();
 	}
 
 

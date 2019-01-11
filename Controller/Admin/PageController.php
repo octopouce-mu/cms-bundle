@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Octopouce\AdminBundle\Utils\FileUploader;
 use Octopouce\CmsBundle\Entity\Field;
 use Octopouce\CmsBundle\Entity\Page;
+use Octopouce\CmsBundle\Entity\PageTranslation;
 use Octopouce\CmsBundle\Form\PageType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
@@ -93,6 +94,16 @@ class PageController extends AbstractController
 			if($fieldsSwitch) {
 				foreach($fieldsSwitch as $field) {
 					$field->setValue(null);
+				}
+			}
+
+			foreach ($page->getTranslations() as $pageTranslation) {
+				// reset input checkbox to null value
+				$fieldsSwitch = $em->getRepository(Field::class)->findBy(['pageTranslation' => $pageTranslation, 'type' => 'switch']);
+				if($fieldsSwitch) {
+					foreach($fieldsSwitch as $field) {
+						$field->setValue(null);
+					}
 				}
 			}
 

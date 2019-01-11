@@ -8,17 +8,15 @@ namespace Octopouce\CmsBundle\Form;
 
 use Octopouce\AdminBundle\Form\Type\DatePickerType;
 use Octopouce\AdminBundle\Form\Type\SwitchType;
+use Octopouce\AdminBundle\Form\Type\TranslationsType;
 use Octopouce\CmsBundle\Entity\Page;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageType extends AbstractType
@@ -32,6 +30,9 @@ class PageType extends AbstractType
 			->add('title', TextType::class, [
 				'disabled' => $disabled
 			])
+
+
+
 			->add('slug', TextType::class, [
 				'attr' => ['placeholder' => ''],
 				'disabled' => $disabled
@@ -44,6 +45,17 @@ class PageType extends AbstractType
 				'allow_delete' => true,
 				'label' => false,
 				'by_reference' => false
+			])
+
+			->add('translations', TranslationsType::class, [
+				'fields' => [
+					'blocks' => [
+						'field_type' => CollectionType::class,
+						'entry_type' => PageBlockType::class,
+						'label' => false
+			        ]
+ 			    ],
+				'excluded_fields' => ['fields', 'id', 'locale']
 			])
 
 //			->add('fields', CollectionType::class, [

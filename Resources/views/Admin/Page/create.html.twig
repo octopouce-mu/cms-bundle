@@ -20,41 +20,107 @@
                         </ul>
                     </div>
                     <div id="page" class="col s12">
-                        <div class="box">
-                            <div class="content">
-                                {{ form_row(form.title) }}
-                                {{ form_row(form.slug) }}
+                        {% if form.translations|length > 0 %}
+                            <ul class="tabs transparent">
+                                <li class="tab col s3"><a href="#page-translations-{{ app.request.locale }}" class="active">{{ app.request.locale }}</a></li>
+                                {% for lang, fields in form.translations %}
+                                    <li class="tab col s3"><a href="#page-translations-{{ lang }}">{{ lang }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div id="page-translations-{{ app.request.locale }}">
+                            <div class="box">
+                                <div class="content">
+                                    {{ form_row(form.title) }}
+                                    {{ form_row(form.slug) }}
+                                </div>
                             </div>
+                            <div id="block-fields-list" data-prototype="{{ form_widget(form.blocks.vars.prototype)|e }}"
+                                 data-widget-tags="{{ '<div class="box block"></div>'|e }}">
+                                {% for blockField in form.blocks %}
+                                    <div class="box block">
+                                        <div class="content">
+                                            <button type="button" class="waves-effect waves-light btn-small remove-block red"><i class="fas fa-times"></i></button>
+                                            {{ form_errors(blockField) }}
+                                            {{ form_widget(blockField) }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <p>
+                                <button type="button" class="add-another-collection-widget waves-effect waves-light btn"
+                                        data-list="#block-fields-list">Add block</button>
+                            </p>
                         </div>
-
-                        <div id="block-fields-list" data-prototype="{{ form_widget(form.blocks.vars.prototype)|e }}"
-                             data-widget-tags="{{ '<div class="box block"></div>'|e }}">
-                            {% for blockField in form.blocks %}
-                                <div class="box block">
+                        {% for lang, fields in form.translations %}
+                            <div id="page-translations-{{ lang }}">
+                                <div class="box">
                                     <div class="content">
-                                        <button type="button" class="waves-effect waves-light btn-small remove-block red"><i class="fas fa-times"></i></button>
-                                        {{ form_errors(blockField) }}
-                                        {{ form_widget(blockField) }}
+                                        {{ form_row(fields.title) }}
+                                        {{ form_row(fields.slug) }}
                                     </div>
                                 </div>
-                            {% endfor %}
-                        </div>
-                        <p>
-                            <button type="button" class="add-another-collection-widget waves-effect waves-light btn"
-                                    data-list="#block-fields-list">Add block</button>
-                        </p>
+                                <div id="block-fields-list-{{ lang }}" data-prototype="{{ form_widget(fields.blocks.vars.prototype)|e }}"
+                                     data-widget-tags="{{ '<div class="box block"></div>'|e }}">
+                                    {% for blockField in fields.blocks %}
+                                        <div class="box block">
+                                            <div class="content">
+                                                <button type="button" class="waves-effect waves-light btn-small remove-block red"><i class="fas fa-times"></i></button>
+                                                {{ form_errors(blockField) }}
+                                                {{ form_widget(blockField) }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <p>
+                                    <button type="button" class="add-another-collection-widget waves-effect waves-light btn"
+                                            data-list="#block-fields-list-{{ lang }}">Add block</button>
+                                </p>
+                            </div>
+                        {% endfor %}
+
                     </div>
                     <div id="seo" class="col s12">
-                        <div class="box">
-                            <div class="content">
-                                {{ form_row(form.seoTitle) }}
-                                {{ form_row(form.seoDescription) }}
+                        {% if form.translations|length > 0 %}
+                            <ul class="tabs transparent">
+                                <li class="tab col s3"><a href="#seo-translations-{{ app.request.locale }}" class="active">{{ app.request.locale }}</a></li>
+                                {% for lang, fields in form.translations %}
+                                    <li class="tab col s3"><a href="#seo-translations-{{ lang }}">{{ lang }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div id="seo-translations-{{ app.request.locale }}">
+                            <div class="box">
+                                <div class="content">
+                                    {{ form_row(form.seoTitle) }}
+                                    {{ form_row(form.seoDescription) }}
+                                </div>
+                            </div>
+                            <div class="box">
+                                <div class="content">
+                                    {{ form_row(form.ogTitle) }}
+                                    {{ form_row(form.ogDescription) }}
+                                </div>
                             </div>
                         </div>
+                        {% for lang, fields in form.translations %}
+                            <div id="seo-translations-{{ lang }}">
+                                <div class="box">
+                                    <div class="content">
+                                        {{ form_row(fields.seoTitle) }}
+                                        {{ form_row(fields.seoDescription) }}
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="content">
+                                        {{ form_row(fields.ogTitle) }}
+                                        {{ form_row(fields.ogDescription) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                         <div class="box">
                             <div class="content">
-                                {{ form_row(form.ogTitle) }}
-                                {{ form_row(form.ogDescription) }}
                                 {{ form_row(form.ogImage) }}
                             </div>
                         </div>
