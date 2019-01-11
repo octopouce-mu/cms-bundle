@@ -52,7 +52,7 @@
                                         data-list="#block-fields-list">Add block</button>
                             </p>
                         </div>
-                        {% for lang, fields in form.translations %}
+                        {% for lang, fields in form.translations if form.translations|length > 0 %}
                             <div id="page-translations-{{ lang }}">
                                 <div class="box">
                                     <div class="content">
@@ -103,7 +103,7 @@
                                 </div>
                             </div>
                         </div>
-                        {% for lang, fields in form.translations %}
+                        {% for lang, fields in form.translations if form.translations|length > 0 %}
                             <div id="seo-translations-{{ lang }}">
                                 <div class="box">
                                     <div class="content">
