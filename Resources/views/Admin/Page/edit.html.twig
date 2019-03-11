@@ -16,7 +16,7 @@
                     <div class="col s12">
                         <ul class="tabs transparent">
                             <li class="tab col s3"><a href="#page" class="active">Page</a></li>
-                            {% if page.fields %}<li class="tab col s3"><a href="#cf">Custom Fields</a></li>{% endif %}
+                            {% if page.fields|length > 0 %}<li class="tab col s3"><a href="#cf">Custom Fields</a></li>{% endif %}
                             <li class="tab col s3"><a href="#seo">SEO</a></li>
                         </ul>
                     </div>
@@ -88,7 +88,7 @@
                             </div>
                         {% endfor %}
                     </div>
-                    {% if page.fields %}
+                    {% if page.fields|length > 0 %}
                         <div id="cf" class="col s12">
                             {% if form.translations|length > 0 %}
                                 <ul class="tabs transparent">
