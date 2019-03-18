@@ -70,7 +70,7 @@ class PageUploadListener {
 
 		// only upload new files
 		if ($ogImage instanceof UploadedFile) {
-			$imgName = $this->uploader->upload($ogImage, $entity->getId());
+			$imgName = $this->uploader->upload($ogImage, 'date');
 			$entity->setOgImage($imgName);
 		} elseif($ogImage instanceof File){
 			$entity->setOgImage($ogImage->getFilename());
