@@ -84,7 +84,7 @@ class Page
 	/**
 	 * @var string
 	 *
-	 * @ORM\Column(name="seo_description", type="string", length=255, nullable=true)
+	 * @ORM\Column(name="seo_description", type="text", nullable=true)
 	 */
 	protected $seoDescription;
 
@@ -98,7 +98,7 @@ class Page
 	/**
 	 * @var string
 	 *
-	 * @ORM\Column(name="og_description", type="string", length=255, nullable=true)
+	 * @ORM\Column(name="og_description", type="text", nullable=true)
 	 */
 	protected $ogDescription;
 

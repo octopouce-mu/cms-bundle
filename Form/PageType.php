@@ -94,7 +94,7 @@ class PageType extends AbstractType
 			->add('seoDescription', TextType::class, [
 				'required' => false,
 				'constraints' => array(
-					new Length(['max' => 165])
+					new Length(['max' => 300])
 				)
 			])
 
@@ -104,7 +104,7 @@ class PageType extends AbstractType
 			->add('ogDescription', TextType::class, [
 				'required' => false,
 				'constraints' => array(
-					new Length(['max' => 165])
+					new Length(['max' => 300])
 				)
 			])
 			->add('ogImage', FileType::class, [
