@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 class PageType extends AbstractType
 {
@@ -91,14 +92,20 @@ class PageType extends AbstractType
 				'required' => false
 			])
 			->add('seoDescription', TextType::class, [
-				'required' => false
+				'required' => false,
+				'constraints' => array(
+					new Length(['max' => 165])
+				)
 			])
 
 			->add('ogTitle', TextType::class, [
 				'required' => false
 			])
 			->add('ogDescription', TextType::class, [
-				'required' => false
+				'required' => false,
+				'constraints' => array(
+					new Length(['max' => 165])
+				)
 			])
 			->add('ogImage', FileType::class, [
 				'required' => false
