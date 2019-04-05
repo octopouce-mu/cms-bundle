@@ -85,6 +85,14 @@ security:
         ROLE_SUPER_ADMIN: ROLE_ADMIN
 ```
 
+## Step 7: Generate Data Fixtures
+
+The bundle need data default for working so uou can to generate fixtures data in database :
+
+```bash
+$ php bin/console doctrine:fixtures:load
+```
+
 Others bundles
 --------------
 
