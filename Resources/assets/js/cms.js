@@ -579,6 +579,10 @@ const imageTextBlock = function(block, textarea) {
 
     if(textarea.find('textarea').text().length > 0) {
         var contentObject = $.parseJSON(textarea.find('textarea').val());
+
+        block.find('input[name="titre"]').val(contentObject.title);
+        block.find('textarea[name="description"]').html(contentObject.description);
+
         block.find('.add-img').html('<div class="preloader-wrapper small active">\n' +
             '      <div class="spinner-layer spinner-blue">\n' +
             '        <div class="circle-clipper left">\n' +
@@ -704,7 +708,7 @@ const imageTextBlock = function(block, textarea) {
 const appendValueByImageText = function (block, textarea) {
     textarea = textarea.find('textarea');
 
-    var titre = block.find('input[name="titre"').val();
+    var titre = block.find('input[name="titre"]').val();
     var description = block.find('.ck-content').html();
     var image = block.find('img');
 

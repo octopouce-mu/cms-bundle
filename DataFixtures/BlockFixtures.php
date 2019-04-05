@@ -38,6 +38,7 @@ class BlockFixtures extends Fixture
 	        ['Wysiwyg', 'wysiwyg', null],
 	        ['Tabs', 'tabs', null],
 	        ['Sliders', 'sliders', null],
+	        ['Text & Image', 'imageText', null],
         ];
     }
 }
