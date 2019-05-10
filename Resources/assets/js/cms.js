@@ -596,12 +596,13 @@ const imageTextBlock = function(block, textarea) {
 
         $.get( "/admin/file/api/" + contentObject.image.id, function( img ) {
             block.find('.add-img').append('<img data-img-title="'+ img.title +'" data-img-alt="'+ img.alt +'" data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="/' + img.path +'" width="300">');
-            block.find('.add-img btn').remove();
+            block.find('.add-img .btn').remove();
             block.find('.preloader-wrapper').remove();
             editImageText(block);
         }).catch(function(){
             block.find('.add-img').append('<img data-img-id="' + img.id +'" data-img-path="' + img.path +'" src="">');
-            block.find('.add-img btn').remove();
+            block.find('.add-img .' +
+                'btn').remove();
             block.find('.preloader-wrapper').remove();
             editImageText(block);
         });
@@ -629,7 +630,7 @@ const imageTextBlock = function(block, textarea) {
 
 
     // add image
-    block.find('.add-img btn').on('click', function(){
+    block.find('.add-img .btn').on('click', function(){
         $('#' + blockId + '_image-text_modal').modal('open');
         $('#' + blockId + '_image-text_modal h4').text('Add image');
         $('#' + blockId + '_image-text_modal .img-show').html('');
@@ -671,7 +672,7 @@ const imageTextBlock = function(block, textarea) {
                          editImageText(block);
                      } else {
                          block.find('.add-img').append('<img data-img-title="'+ title +'" data-img-alt="'+ alt +'" data-img-id="' + res.id +'" data-img-path="' + res.path +'" src="/' + res.path +'" width="300">');
-                         block.find('.add-img btn').remove();
+                         block.find('.add-img .btn').remove();
                          editImageText(block);
                     }
 
